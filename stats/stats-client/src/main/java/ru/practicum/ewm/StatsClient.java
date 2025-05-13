@@ -1,67 +1,42 @@
-package ru.practicum.ewm;
+package ru.practicum.statsclient;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.DefaultUriBuilderFactory;
+import org.springframework.web.client.RestTemplate;
+import ru.practicum.ewm.EndpointHitInputDto;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
-public class StatsClient extends BaseClient {
+public class StatsClient {
 
-    @Autowired
-    public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
-        super(builder
-            .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
-            .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
-            .build()
-        );
-    }
+    private final RestTemplate restTemplate;
+
+    private static final String BASE_URL = "http://stats-server";
 
     public ResponseEntity<Object> addHit(EndpointHitInputDto hitDto) {
-        log.info("Отправлен Post /hit запрос на сервер с данными {}", hitDto);
-        return post("/hit", hitDto);
+        log.info("POST {}/hit", BASE_URL);
+        return restTemplate.postForEntity(BASE_URL + "/hit", hitDto, Object.class);
     }
 
     public ResponseEntity<Object> getStats(@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
                                            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                            List<String> uris,
                                            Boolean unique) {
-
-        Map<String, Object> parameters = new HashMap<>();
-        StringBuilder uriBuilder = new StringBuilder("/stats");
-        uriBuilder.append("?unique=").append(unique);
-        parameters.put("unique", unique);
-
-        if (start != null) {
-            uriBuilder.append("&start=").append(start.toString());
-            parameters.put("start", start.toString());
-        }
-        if (end != null) {
-            uriBuilder.append("&end=").append(end.toString());
-            parameters.put("end", end.toString());
-        }
+        StringBuilder uri = new StringBuilder(BASE_URL + "/stats?unique=" + unique);
+        if (start != null) uri.append("&start=").append(start);
+        if (end != null) uri.append("&end=").append(end);
         if (uris != null && !uris.isEmpty()) {
-            uriBuilder.append("&uris=").append(String.join(",", uris));
-            parameters.put("uris", String.join(",", uris));
+            uri.append("&uris=").append(String.join(",", uris));
         }
 
-        String uri = uriBuilder.toString();
-        log.info("Отправлен Get /stats запрос на сервер с данными " + uri);
-
-        ResponseEntity<Object> response = get(uri, parameters);
-
-        log.info("Получен ответ Get /stats с сервера статистики с телом {}", response.getBody());
-        return response;
+        log.info("GET {}", uri);
+        return restTemplate.getForEntity(uri.toString(), Object.class);
     }
 }
