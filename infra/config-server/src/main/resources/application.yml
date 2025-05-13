@@ -4,12 +4,14 @@ server:
 spring:
   application:
     name: config-server
+  profiles:
+    active: native
   cloud:
     config:
       server:
-        git:
-          uri: https://github.com/<your-username>/ewm-config
-          clone-on-start: true
+        native:
+          search-locations:
+            - classpath:config/main/{application}
 
 eureka:
   client:
