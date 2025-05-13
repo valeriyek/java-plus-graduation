@@ -12,8 +12,9 @@
 
 	<name>Explore With Me</name>
 	<modules>
-		<module>ewm-stat</module>
-		<module>ewm-main</module>
+		<module>stats</module>
+		<module>core</module>
+		<module>infra</module>
 	</modules>
 
 	<groupId>ru.practicum</groupId>
@@ -25,6 +26,18 @@
 		<java.version>21</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<!-- Spring Cloud BOM -->
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>2023.0.1</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
 		<pluginManagement>
