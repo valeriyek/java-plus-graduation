@@ -1,37 +1,30 @@
-services:
+ewm-db:
+  image: postgres:16.1
+  container_name: ewm-db
+  ports:
+    - "6542:5432"
+  environment:
+    - POSTGRES_USER=dbuser
+    - POSTGRES_PASSWORD=12345
+    - POSTGRES_DB=postgres # базовая, обязательная
+  healthcheck:
+    test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+    timeout: 5s
+    interval: 5s
+    retries: 10
 
-  stats-db:
-    image: postgres:16.1
-    container_name: stats-db
-    ports:
-      - "6541:5432"
-    volumes:
-      - ./stats/stats-server/src/main/resources/db:/var/lib/postgresql/data
-      - ./stats/stats-server/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
-    environment:
-      - POSTGRES_DB=statsdb
-      - POSTGRES_USER=dbuser
-      - POSTGRES_PASSWORD=12345
-    healthcheck:
-      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
-      interval: 5s
-      retries: 10
-
-  ewm-db:
-    image: postgres:16.1
-    container_name: main-db
-    ports:
-      - "6542:5432"
-    volumes:
-      - ./core/main-service/src/main/resources/db:/var/lib/postgresql/data
-      - ./core/main-service/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
-    environment:
-      - POSTGRES_DB=maindb
-      - POSTGRES_USER=dbuser
-      - POSTGRES_PASSWORD=12345
-    healthcheck:
-      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
-      interval: 5s
-      retries: 10
+ewm-db-init:
+  image: postgres:16.1
+  container_name: ewm-db-init
+  depends_on:
+    ewm-db:
+      condition: service_healthy
+  entrypoint:
+    - bash
+    - -c
+    - |
+      set -e
+      psql postgresql://dbuser:12345@ewm-db:5432/postgres -v ON_ERROR_STOP=1 <<-EOSQL
+      create database statsdb;
+      create database maindb;
+      EOSQL
