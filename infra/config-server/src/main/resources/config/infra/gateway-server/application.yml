@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+reactor:
+  netty:
+    http:
+      client:
+        wiretap: true
+      server:
+        wiretap: true
+
+spring:
+  cloud:
+    gateway:
+      discovery.locator.enabled: true
+      routes:
+        - id: main_service_route
+          uri: lb://main-service
+          predicates:
+            - Path=/**

@@ -1,24 +1,4 @@
-version: '3.8'
-
 services:
-
-  ewm-db:
-    image: postgres:16.1
-    container_name: main-db
-    ports:
-      - "6542:5432"
-    volumes:
-      - ./ewm-main/src/main/resources/db:/var/lib/postgresql/data
-      - ./ewm-main/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
-    environment:
-      - POSTGRES_DB=maindb
-      - POSTGRES_USER=dbuser
-      - POSTGRES_PASSWORD=12345
-    healthcheck:
-      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
-      interval: 5s
-      retries: 10
 
   stats-db:
     image: postgres:16.1
@@ -26,8 +6,8 @@ services:
     ports:
       - "6541:5432"
     volumes:
-      - ./ewm-stat/ewm-stat-service/src/main/resources/db:/var/lib/postgresql/data
-      - ./ewm-stat/ewm-stat-service/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./stats/stats-server/src/main/resources/db:/var/lib/postgresql/data
+      - ./stats/stats-server/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     environment:
       - POSTGRES_DB=statsdb
       - POSTGRES_USER=dbuser
@@ -38,64 +18,20 @@ services:
       interval: 5s
       retries: 10
 
-  discovery-server:
-    build: ./discovery-server
-    container_name: discovery-server
+  ewm-db:
+    image: postgres:16.1
+    container_name: main-db
     ports:
-      - "8761:8761"
-
-  config-server:
-    build: ./config-server
-    container_name: config-server
-    ports:
-      - "8888:8888"
-    depends_on:
-      - discovery-server
+      - "6542:5432"
+    volumes:
+      - ./core/main-service/src/main/resources/db:/var/lib/postgresql/data
+      - ./core/main-service/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     environment:
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
-
-  stats-server:
-    build: ./ewm-stat/ewm-stat-service
-    container_name: stats-server
-    ports:
-      - "9090:9090"
-    depends_on:
-      - stats-db
-      - discovery-server
-      - config-server
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/statsdb
-      - SPRING_DATASOURCE_USERNAME=dbuser
-      - SPRING_DATASOURCE_PASSWORD=12345
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
-
-  ewm-service:
-    build: ./ewm-main
-    container_name: ewm-main
-    ports:
-      - "8080:8080"
-    depends_on:
-      - ewm-db
-      - stats-server
-      - discovery-server
-      - config-server
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/maindb
-      - SPRING_DATASOURCE_USERNAME=dbuser
-      - SPRING_DATASOURCE_PASSWORD=12345
-      - STATS_SERVER_URL=http://stats-server:9090
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
-
-  gateway-server:
-    build: ./gateway-server
-    container_name: gateway-server
-    ports:
-      - "8081:8080"
-    depends_on:
-      - discovery-server
-      - config-server
-    environment:
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - POSTGRES_DB=maindb
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=12345
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10

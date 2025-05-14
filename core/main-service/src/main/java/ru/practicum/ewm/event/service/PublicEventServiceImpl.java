@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.EndpointHitInputDto;
 
-import ru.practicum.ewm.StatsClient;
+import ru.practicum.ewm.StatFeignClient;
 import ru.practicum.ewm.ViewStatsOutputDto;
 import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.event.dto.*;
@@ -33,7 +33,7 @@ public class PublicEventServiceImpl implements PublicEventService {
     private static final String APP_NAME = "ewm-main";
 
     private final EventRepository eventRepository;
-    private final StatsClient statsClient;
+    private final StatFeignClient statsClient;
 
     @Override
     @Transactional(readOnly = true)
