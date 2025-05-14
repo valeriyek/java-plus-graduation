@@ -15,9 +15,19 @@ spring:
         - id: main-service
           uri: lb://main-service
           predicates:
-            - Path=/events/**
-            - Path=/users/**
-            - Path=/compilations/**
+            predicates:
+              - Path=/events/**
+              - Path=/users/**
+              - Path=/compilations/**
+              - Path=/categories/**
+              - Path=/requests/**
+              - Path=/admin/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
 
 eureka:
   client:
