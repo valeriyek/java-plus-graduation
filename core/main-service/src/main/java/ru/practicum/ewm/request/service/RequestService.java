@@ -70,7 +70,7 @@ public class RequestService {
 "Если для события лимит заявок равен 0, то подтверждение заявок не требуется".
 Статусы заявок - если хотя бы одно из условий выполняется, заявка переходит в статус CONFIRMED. Если оба
 условия не выполняются (например, премодерация включена и есть лимит участников), заявка остается в статусе PENDING.*/
-        boolean autoConfirm = !event.isRequestModeration() && event.getParticipantLimit() == 0;
+        boolean autoConfirm = !event.isRequestModeration() || event.getParticipantLimit() == 0;
         request.setStatus(autoConfirm ? RequestStatus.CONFIRMED : RequestStatus.PENDING);
         ParticipationRequest savedRequest = requestRepository.save(request);
         //если заявка CONFIRMED, нужно увеличить счётчик confirmedRequests
