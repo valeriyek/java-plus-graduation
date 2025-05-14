@@ -13,53 +13,26 @@ spring:
           enabled: false
 
       routes:
-        # --- EVENTS ---
         - id: main-service-events
-          uri: lb://main-service
+          uri: http://localhost:8081
           predicates:
             - Path=/events/**
-          filters:
-            - StripPrefix=0
-
-        # --- USERS ---
         - id: main-service-users
-          uri: lb://main-service
+          uri: http://localhost:8081
           predicates:
             - Path=/users/**
-          filters:
-            - StripPrefix=0
-
-        # --- COMPILATIONS ---
-        - id: main-service-compilations
-          uri: lb://main-service
-          predicates:
-            - Path=/compilations/**
-          filters:
-            - StripPrefix=0
-
-        # --- CATEGORIES ---
         - id: main-service-categories
-          uri: lb://main-service
+          uri: http://localhost:8081
           predicates:
             - Path=/categories/**
-          filters:
-            - StripPrefix=0
-
-        # --- REQUESTS ---
-        - id: main-service-requests
-          uri: lb://main-service
+        - id: main-service-compilations
+          uri: http://localhost:8081
           predicates:
-            - Path=/requests/**
-          filters:
-            - StripPrefix=0
-
-        # --- ADMIN ---
+            - Path=/compilations/**
         - id: main-service-admin
-          uri: lb://main-service
+          uri: http://localhost:8081
           predicates:
             - Path=/admin/**
-          filters:
-            - StripPrefix=0
 
 
 management:
