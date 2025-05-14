@@ -14,11 +14,16 @@ spring:
         - id: main-service
           uri: lb://main-service
           predicates:
-            - Path=/events/**,/users/**,/compilations/**
+            - Path=/events/**
+            - Path=/users/**
+            - Path=/compilations/**
+
 
 
 
 eureka:
   client:
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
