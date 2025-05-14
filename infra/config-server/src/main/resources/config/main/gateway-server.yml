@@ -10,29 +10,46 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: false
+          enabled: true
+          lower-case-service-id: true
 
       routes:
-        - id: main-service-events
-          uri: http://localhost:8081
+
+        - id: main-events
+          uri: lb://main-service
           predicates:
             - Path=/events/**
-        - id: main-service-users
-          uri: http://localhost:8081
+
+        - id: main-users
+          uri: lb://main-service
           predicates:
             - Path=/users/**
-        - id: main-service-categories
-          uri: http://localhost:8081
+
+        - id: main-categories
+          uri: lb://main-service
           predicates:
             - Path=/categories/**
-        - id: main-service-compilations
-          uri: http://localhost:8081
+
+        - id: main-compilations
+          uri: lb://main-service
           predicates:
             - Path=/compilations/**
-        - id: main-service-admin
-          uri: http://localhost:8081
+
+        - id: main-admin
+          uri: lb://main-service
           predicates:
             - Path=/admin/**
+
+
+        - id: stats-hit
+          uri: lb://stats-server
+          predicates:
+            - Path=/hit
+
+        - id: stats-stats
+          uri: lb://stats-server
+          predicates:
+            - Path=/stats
 
 
 management:
