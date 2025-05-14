@@ -13,17 +13,54 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
-        - id: main-service
+        # --- EVENTS ---
+        - id: main-service-events
           uri: lb://main-service
           predicates:
             - Path=/events/**
+          filters:
+            - StripPrefix=0
+
+        # --- USERS ---
+        - id: main-service-users
+          uri: lb://main-service
+          predicates:
             - Path=/users/**
+          filters:
+            - StripPrefix=0
+
+        # --- COMPILATIONS ---
+        - id: main-service-compilations
+          uri: lb://main-service
+          predicates:
             - Path=/compilations/**
+          filters:
+            - StripPrefix=0
+
+        # --- CATEGORIES ---
+        - id: main-service-categories
+          uri: lb://main-service
+          predicates:
             - Path=/categories/**
+          filters:
+            - StripPrefix=0
+
+        # --- REQUESTS ---
+        - id: main-service-requests
+          uri: lb://main-service
+          predicates:
             - Path=/requests/**
+          filters:
+            - StripPrefix=0
+
+        # --- ADMIN ---
+        - id: main-service-admin
+          uri: lb://main-service
+          predicates:
             - Path=/admin/**
           filters:
             - StripPrefix=0
+
 
 management:
   endpoints:
