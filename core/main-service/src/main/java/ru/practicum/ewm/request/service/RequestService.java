@@ -72,6 +72,9 @@ public class RequestService {
 условия не выполняются (например, премодерация включена и есть лимит участников), заявка остается в статусе PENDING.*/
         boolean autoConfirm = !event.isRequestModeration() || event.getParticipantLimit() == 0;
         request.setStatus(autoConfirm ? RequestStatus.CONFIRMED : RequestStatus.PENDING);
+        log.info("Создание заявки: moderation={}, limit={}, autoConfirm={}",
+                event.isRequestModeration(), event.getParticipantLimit(), autoConfirm);
+
         ParticipationRequest savedRequest = requestRepository.save(request);
         //если заявка CONFIRMED, нужно увеличить счётчик confirmedRequests
         if (RequestStatus.CONFIRMED.equals(savedRequest.getStatus())) {
