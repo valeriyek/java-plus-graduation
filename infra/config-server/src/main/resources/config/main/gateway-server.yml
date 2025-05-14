@@ -4,7 +4,6 @@ server:
 spring:
   application:
     name: gateway-server
-
   cloud:
     gateway:
       discovery:
@@ -22,6 +21,8 @@ spring:
               - Path=/categories/**
               - Path=/requests/**
               - Path=/admin/**
+            filters:
+              - StripPrefix=0
 
 management:
   endpoints:
