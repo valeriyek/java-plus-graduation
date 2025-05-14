@@ -14,15 +14,14 @@ spring:
         - id: main-service
           uri: lb://main-service
           predicates:
-            predicates:
-              - Path=/events/**
-              - Path=/users/**
-              - Path=/compilations/**
-              - Path=/categories/**
-              - Path=/requests/**
-              - Path=/admin/**
-            filters:
-              - StripPrefix=0
+            - Path=/events/**
+            - Path=/users/**
+            - Path=/compilations/**
+            - Path=/categories/**
+            - Path=/requests/**
+            - Path=/admin/**
+          filters:
+            - StripPrefix=0
 
 management:
   endpoints:
