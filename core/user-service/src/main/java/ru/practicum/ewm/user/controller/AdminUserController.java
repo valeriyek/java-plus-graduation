@@ -5,10 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import ru.practicum.ewm.user.dto.NewUserRequest;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.service.AdminUserService;
-import ru.practicum.ewm.user.validation.CreateGroup;
+import ru.practicum.ewm.validation.CreateGroup;
 
 
 import java.util.List;

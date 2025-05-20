@@ -4,8 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import ru.practicum.ewm.user.validation.CreateGroup;
-
+import ru.practicum.ewm.validation.CreateGroup;
 
 @Data
 public class NewUserRequest {
