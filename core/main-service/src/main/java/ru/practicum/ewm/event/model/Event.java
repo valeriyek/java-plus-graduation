@@ -51,9 +51,9 @@ public class Event {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "initiator_id")
-    private User initiator;
+    @Column(name = "initiator_id", nullable = false)
+    private Long initiatorId;
+
 
 
     @ManyToOne(fetch = FetchType.LAZY)

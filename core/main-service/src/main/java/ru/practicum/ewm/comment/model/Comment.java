@@ -20,9 +20,8 @@ public class Comment {
     @Column
     private String text;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    private User author;
+    @Column(name = "author_id")
+    private Long authorId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")

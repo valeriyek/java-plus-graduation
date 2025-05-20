@@ -4,30 +4,32 @@ import ru.practicum.ewm.comment.dto.CommentShortDto;
 import ru.practicum.ewm.comment.dto.NewComment;
 import ru.practicum.ewm.comment.model.Comment;
 import ru.practicum.ewm.event.model.Event;
+import ru.practicum.ewm.user.dto.UserShortDto;
 import ru.practicum.ewm.user.dto.mapper.UserMapper;
 import ru.practicum.ewm.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CommentMapper {
 
-    public static Comment fromNewCommentToComment(NewComment newComment, User author, Event event) {
+    public static Comment fromNewCommentToComment(NewComment newComment, Long userId, Event event) {
         Comment comment = new Comment();
         comment.setText(newComment.getText());
-        comment.setAuthor(author);
+        comment.setAuthorId(userId);
         comment.setEvent(event);
         comment.setPublishedOn(LocalDateTime.now());
         comment.setIsUpdated(false);
         return comment;
     }
 
-    public static CommentShortDto toCommentShortDto(Comment comment) {
+    public static CommentShortDto toCommentShortDto(Comment comment, UserShortDto author) {
         CommentShortDto commentShortDto = new CommentShortDto();
         commentShortDto.setId(comment.getId());
         commentShortDto.setEventId(comment.getEvent().getId());
-        commentShortDto.setAuthor(UserMapper.toUserShortDto(comment.getAuthor()));
+        commentShortDto.setAuthor(author);
         commentShortDto.setText(comment.getText());
         commentShortDto.setPublishedOn(comment.getPublishedOn());
         commentShortDto.setIsUpdated(comment.getIsUpdated());
@@ -35,11 +37,13 @@ public class CommentMapper {
         return commentShortDto;
     }
 
-    public static List<CommentShortDto> toCommentShortDto(Iterable<Comment> comments) {
-        List<CommentShortDto> shortComments = new ArrayList<>();
+    public static List<CommentShortDto> toCommentShortDto(Iterable<Comment> comments, Map<Long, UserShortDto> authorsById) {
+        List<CommentShortDto> result = new ArrayList<>();
         for (Comment comment : comments) {
-            shortComments.add(toCommentShortDto(comment));
+            UserShortDto author = authorsById.getOrDefault(comment.getAuthorId(), null);
+            result.add(toCommentShortDto(comment, author));
         }
-        return shortComments;
+        return result;
     }
+
 }

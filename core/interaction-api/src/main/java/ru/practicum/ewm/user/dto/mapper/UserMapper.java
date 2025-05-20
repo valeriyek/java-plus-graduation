@@ -33,13 +33,7 @@ public class UserMapper {
         return userShortDto;
     }
 
-    public static List<UserShortDto> toUserShortDto(Iterable<User> users) {
-        List<UserShortDto> result = new ArrayList<>();
-        for (User user : users) {
-            result.add(toUserShortDto(user));
-        }
-        return result;
-    }
+
 
     public static User toUser(NewUserRequest newUserRequest) {
         User user = new User();
@@ -47,4 +41,17 @@ public class UserMapper {
         user.setEmail(newUserRequest.getEmail());
         return user;
     }
+
+    public static UserShortDto toUserShortDto(Long id) {
+        UserShortDto userShortDto = new UserShortDto();
+        userShortDto.setId(id);
+        return userShortDto;
+    }
+    public static UserShortDto toUserShortDto(Long id, String name) {
+        UserShortDto dto = new UserShortDto();
+        dto.setId(id);
+        dto.setName(name);
+        return dto;
+    }
+
 }

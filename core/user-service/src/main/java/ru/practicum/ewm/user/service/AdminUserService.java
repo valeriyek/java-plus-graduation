@@ -15,6 +15,7 @@ import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -44,5 +45,8 @@ public class AdminUserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new ValidationException("Пользователь с email = " + user.getEmail() + " уже существует");
         }
+    }
+    public Optional<User> getUserById(Long id) {
+        return userRepository.findById(id);
     }
 }

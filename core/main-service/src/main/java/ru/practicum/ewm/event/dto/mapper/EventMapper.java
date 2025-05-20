@@ -5,6 +5,7 @@ import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.event.dto.*;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.model.EventState;
+import ru.practicum.ewm.user.dto.UserShortDto;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.dto.mapper.UserMapper;
 
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class EventMapper {
 
-    public static Event toEvent(NewEventDto dto, User initiator, Category category) {
+    public static Event toEvent(NewEventDto dto, Long initiatorId, Category category) {
         Event event = new Event();
         event.setAnnotation(dto.getAnnotation());
         event.setDescription(dto.getDescription());
@@ -26,7 +27,7 @@ public class EventMapper {
         event.setTitle(dto.getTitle());
         event.setState(EventState.PENDING);
         event.setCreatedOn(LocalDateTime.now());
-        event.setInitiator(initiator);
+        event.setInitiatorId(initiatorId);
         event.setCategory(category);
         event.setViews(0L);
         event.setConfirmedRequests(0L);
@@ -80,7 +81,6 @@ public class EventMapper {
         dto.setTitle(event.getTitle());
         dto.setCreatedOn(event.getCreatedOn());
         dto.setPublishedOn(event.getPublishedOn());
-        dto.setInitiator(UserMapper.toUserShortDto(event.getInitiator()));
         dto.setCategory(CategoryMapper.mapToCategoryDto(event.getCategory()));
         dto.setConfirmedRequests(event.getConfirmedRequests() != null ? event.getConfirmedRequests() : 0L);
         dto.setViews(event.getViews() != null ? event.getViews() : 0L);
@@ -104,7 +104,6 @@ public class EventMapper {
         dto.setTitle(event.getTitle());
         dto.setConfirmedRequests(event.getConfirmedRequests() != null ? event.getConfirmedRequests() : 0L);
         dto.setViews(event.getViews() != null ? event.getViews() : 0L);
-        dto.setInitiator(UserMapper.toUserShortDto(event.getInitiator()));
         dto.setCategory(CategoryMapper.mapToCategoryDto(event.getCategory()));
         return dto;
     }
@@ -116,4 +115,16 @@ public class EventMapper {
         }
         return result;
     }
+
+    public static EventFullDto toEventFullDto(Event event, UserShortDto initiator) {
+        EventFullDto dto = toEventFullDto(event);
+        dto.setInitiator(initiator);
+        return dto;
+    }
+    public static EventShortDto toEventShortDto(Event event, UserShortDto initiator) {
+        EventShortDto dto = toEventShortDto(event);
+        dto.setInitiator(initiator);
+        return dto;
+    }
+
 }

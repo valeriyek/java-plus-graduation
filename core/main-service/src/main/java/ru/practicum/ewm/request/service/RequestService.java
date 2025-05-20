@@ -10,12 +10,13 @@ import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.exception.ParticipantLimitReachedException;
 import ru.practicum.ewm.exception.ValidationException;
+import ru.practicum.ewm.feign.UserServiceClient;
 import ru.practicum.ewm.request.repository.RequestRepository;
 import ru.practicum.ewm.request.dto.*;
 import ru.practicum.ewm.request.dto.mapper.RequestMapper;
 import ru.practicum.ewm.request.model.ParticipationRequest;
 import ru.practicum.ewm.request.model.RequestStatus;
-import ru.practicum.ewm.user.repository.UserRepository;
+
 import ru.practicum.ewm.user.model.User;
 
 import java.time.LocalDateTime;
@@ -30,7 +31,7 @@ public class RequestService {
 
     private final RequestRepository requestRepository;
     private final EventRepository eventRepository;
-    private final UserRepository userRepository;
+    private final UserServiceClient userServiceClient;
 
     public List<ParticipationRequestDto> getRequestsOfUser(Long userId) {
         checkUserExists(userId);
@@ -42,11 +43,11 @@ public class RequestService {
 
     @Transactional
     public ParticipationRequestDto addRequest(Long userId, Long eventId) {
-        User user = getUserOrThrow(userId);
+        checkUserExists(userId);
         Event event = getEventOrThrow(eventId);
 
 
-        if (event.getInitiator().getId().equals(userId)) {
+        if (event.getInitiatorId().equals(userId)) {
             throw new ValidationException("Инициатор события не может добавить запрос на участие в своём событии.");
         }
 
@@ -63,7 +64,7 @@ public class RequestService {
         ParticipationRequest request = new ParticipationRequest();
         request.setCreated(LocalDateTime.now());
         request.setEvent(event);
-        request.setRequester(user);
+        request.setRequesterId(userId);
 /* Условие !event.isRequestModeration()- если для события не требуется премодерация заявок на участие, то заявка должна автоматически переходить в статус CONFIRMED.
 "Если для события отключена пре-модерация запросов на участие, то запрос должен автоматически перейти в состояние подтвержденного".
 Условие event.getParticipantLimit() == 0 - если нет ограничения на количество участников (лимит равен 0), заявка тоже должна автоматически подтверждаться.
@@ -104,7 +105,7 @@ public class RequestService {
     public List<ParticipationRequestDto> getRequestsForUserEvent(Long userId, Long eventId) {
         checkUserExists(userId);
         Event event = getEventOrThrow(eventId);
-        if (!event.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiatorId().equals(userId)) {
             throw new NotFoundException("Событие не принадлежит пользователю id=" + userId);
         }
         List<ParticipationRequest> requests = requestRepository.findAllByEventId(eventId);
@@ -115,7 +116,7 @@ public class RequestService {
     @Transactional
     public EventRequestStatusUpdateResult changeRequestsStatus(Long userId, Long eventId, EventRequestStatusUpdateRequest statusUpdateRequest) {
         Event event = getEventOrThrow(eventId);
-        if (!event.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiatorId().equals(userId)) {
             throw new NotFoundException("Событие не принадлежит пользователю id=" + userId);
         }
 
@@ -166,10 +167,9 @@ public class RequestService {
     }
 
     private void checkUserExists(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь с id=" + userId + " не найден");
-        }
+        userServiceClient.getUserById(userId);
     }
+
 
     private Event getEventOrThrow(Long eventId) {
         return eventRepository.findById(eventId)
@@ -180,11 +180,5 @@ public class RequestService {
     }
 
 
-    private User getUserOrThrow(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.error("Пользователь с id={} не найден", id);
-                    return new NotFoundException("Пользователь с id=" + id + " не найден");
-                });
-    }
+
 }

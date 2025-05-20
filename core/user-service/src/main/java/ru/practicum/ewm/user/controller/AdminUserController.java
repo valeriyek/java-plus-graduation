@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.practicum.ewm.user.dto.NewUserRequest;
 import ru.practicum.ewm.user.dto.UserDto;
+import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.service.AdminUserService;
 import ru.practicum.ewm.validation.CreateGroup;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -48,5 +50,13 @@ public class AdminUserController {
         log.info("Поступил запрос Delete /admin/users/{} на удаление User с id = {}", id, id);
         adminUserService.deleteUserById(id);
         log.info("Выполнен запрос Delete /admin/users/{} на удаление User с id = {}", id, id);
+    }
+
+    @GetMapping("/{id}")
+    public Optional<User> getUserById(@PathVariable Long id) {
+        log.info("Поступил запрос Get /admin/users/{} на получение User с id = {}", id, id);
+        Optional<User> response = adminUserService.getUserById(id);
+        log.info("Сформирован ответ Get /admin/users/{} с телом: {}", id, response);
+        return response;
     }
 }

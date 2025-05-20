@@ -26,10 +26,9 @@ public class ParticipationRequest {
     @JoinColumn(name = "event_id")
     private Event event;
 
-    // Пользователь, отправивший заявку
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "requester_id")
-    private User requester;
+    @Column(name = "requester_id", nullable = false)
+    private Long requesterId;
+
 
     // Текущий статус заявки
     @Enumerated(EnumType.STRING)

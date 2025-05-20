@@ -7,6 +7,9 @@ import ru.practicum.ewm.comment.dto.CommentShortDto;
 import ru.practicum.ewm.comment.dto.mapper.CommentMapper;
 import ru.practicum.ewm.comment.model.Comment;
 import ru.practicum.ewm.comment.repository.CommentRepository;
+import ru.practicum.ewm.feign.UserServiceClient;
+import ru.practicum.ewm.user.dto.UserDto;
+import ru.practicum.ewm.user.dto.UserShortDto;
 
 import java.util.List;
 
@@ -15,16 +18,24 @@ import java.util.List;
 @Slf4j
 public class PublicCommentServiceImpl implements PublicCommentService {
     private final CommentRepository commentRepository;
+    private final UserServiceClient userClient;
 
     @Override
-    public List<CommentShortDto> getAllByEventId(long id) {
-        List<Comment> comments = commentRepository.findAllByEventId(id);
+    public List<CommentShortDto> getAllByEventId(long eventId) {
+        List<Comment> comments = commentRepository.findAllByEventId(eventId);
 
         List<CommentShortDto> commentsDto = comments.stream()
-            .map(CommentMapper::toCommentShortDto)
-            .toList();
+                .map(comment -> {
+                    UserDto userDto = userClient.getUserById(comment.getAuthorId());
+                    UserShortDto shortDto = new UserShortDto();
+                    shortDto.setId(userDto.getId());
+                    shortDto.setName(userDto.getName());
 
-        log.info("получен список commentsDto для event с id = " + id);
+                    return CommentMapper.toCommentShortDto(comment, shortDto);
+                })
+                .toList();
+
+        log.info("получен список commentsDto для event с id = {}", eventId);
         return commentsDto;
     }
 }

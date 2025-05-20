@@ -15,8 +15,9 @@ import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.exception.ConflictException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.exception.ValidationException;
+import ru.practicum.ewm.feign.UserServiceClient;
 import ru.practicum.ewm.request.repository.RequestRepository;
-import ru.practicum.ewm.user.repository.UserRepository;
+
 import ru.practicum.ewm.user.model.User;
 
 import java.time.LocalDateTime;
@@ -29,7 +30,8 @@ import java.util.stream.Collectors;
 public class EventService {
 
     private final EventRepository eventRepository;
-    private final UserRepository userRepository;
+
+    private final UserServiceClient userClient;
     private final CategoryRepository categoryRepository;
     private final RequestRepository requestRepository;
 
@@ -51,11 +53,11 @@ public class EventService {
 
     @Transactional
     public EventFullDto createEvent(Long userId, NewEventDto dto) {
-        User initiator = getUserOrThrow(userId);
+        checkUserExists(userId);
         Category category = getCategoryOrThrow(dto.getCategory());
 
         checkEventDate(dto.getEventDate());
-        Event event = EventMapper.toEvent(dto, initiator, category);
+        Event event = EventMapper.toEvent(dto, userId, category);
         Event saved = eventRepository.save(event);
         return EventMapper.toEventFullDto(saved);
     }
@@ -63,7 +65,7 @@ public class EventService {
     public EventFullDto getEventOfUser(Long userId, Long eventId) {
         checkUserExists(userId);
         Event event = getEventOrThrow(eventId);
-        if (!event.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiatorId().equals(userId)) {
             throw new NotFoundException("Событие не принадлежит пользователю id=" + userId);
         }
         return EventMapper.toEventFullDto(event);
@@ -74,7 +76,7 @@ public class EventService {
     public EventFullDto updateEventOfUser(Long userId, Long eventId, UpdateEventUserRequest dto) {
         checkUserExists(userId);
         Event event = getEventOrThrow(eventId);
-        if (!event.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiatorId().equals(userId)) {
             throw new NotFoundException("Событие не принадлежит пользователю id=" + userId);
         }
 
@@ -124,9 +126,7 @@ public class EventService {
     }
 
     private void checkUserExists(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь с id=" + userId + " не найден");
-        }
+        userClient.getUserById(userId);
     }
 
     private Event getEventOrThrow(Long id) {
@@ -139,10 +139,6 @@ public class EventService {
                 .orElseThrow(() -> new NotFoundException("Категория с id=" + catId + " не найдена"));
     }
 
-    private User getUserOrThrow(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + userId + " не найден"));
-    }
 
     private void checkEventDate(LocalDateTime eventDate) {
         if (eventDate.isBefore(LocalDateTime.now().plusHours(HOURS_BEFORE_EVENT))) {
