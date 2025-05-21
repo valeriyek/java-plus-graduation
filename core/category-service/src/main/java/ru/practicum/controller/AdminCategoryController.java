@@ -1,4 +1,4 @@
-package ru.practicum.ewm.category.controllers;
+package ru.practicum.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.CategoryDto;
 import ru.practicum.ewm.dto.NewCategoryDto;
-import ru.practicum.ewm.category.service.AdminCategoryService;
+import ru.practicum.service.AdminCategoryService;
 import ru.practicum.ewm.validation.CreateGroup;
 import ru.practicum.ewm.validation.UpdateGroup;
 

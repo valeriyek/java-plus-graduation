@@ -1,4 +1,4 @@
-package ru.practicum.ewm.category.service;
+package ru.practicum.service;
 
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.dto.CategoryDto;

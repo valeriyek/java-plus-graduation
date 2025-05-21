@@ -1,4 +1,4 @@
-package ru.practicum.ewm.category.service;
+package ru.practicum.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dto.CategoryDto;
 import ru.practicum.ewm.category.model.Category;
-import ru.practicum.ewm.category.repository.CategoryRepository;
+import ru.practicum.repository.CategoryRepository;
 import ru.practicum.ewm.exception.NotFoundException;
 
 import java.util.List;
