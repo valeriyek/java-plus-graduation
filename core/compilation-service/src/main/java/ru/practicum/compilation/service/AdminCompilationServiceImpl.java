@@ -1,9 +1,9 @@
-package ru.practicum.ewm.compilation.service;
+package ru.practicum.compilation.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.compilation.repository.CompilationRepository;
+import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.ewm.dto.CompilationDto;
 import ru.practicum.ewm.compilation.model.Compilation;
 import ru.practicum.ewm.dto.NewCompilationDto;

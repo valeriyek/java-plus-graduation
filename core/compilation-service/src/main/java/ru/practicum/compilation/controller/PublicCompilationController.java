@@ -1,4 +1,4 @@
-package ru.practicum.ewm.compilation.controller;
+package ru.practicum.compilation.controller;
 
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.CompilationDto;
-import ru.practicum.ewm.compilation.service.PublicCompilationService;
+import ru.practicum.compilation.service.PublicCompilationService;
 
 import java.util.List;
 

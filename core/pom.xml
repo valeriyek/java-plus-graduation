@@ -19,5 +19,6 @@
         <module>interaction-api</module>
         <module>category-service</module>
         <module>comment-service</module>
+        <module>compilation-service</module>
     </modules>
 </project>

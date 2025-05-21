@@ -10,7 +10,7 @@ import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.exception.ParticipantLimitReachedException;
 import ru.practicum.ewm.exception.ValidationException;
-import ru.practicum.ewm.request.model.ParticipationRequest;
+import ru.practicum.ewm.model.ParticipationRequest;
 import ru.practicum.ewm.request.repository.RequestRepository;
 
 import java.time.LocalDateTime;

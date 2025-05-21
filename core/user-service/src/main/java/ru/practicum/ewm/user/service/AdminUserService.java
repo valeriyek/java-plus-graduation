@@ -10,7 +10,7 @@ import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.dto.NewUserRequest;
 import ru.practicum.ewm.dto.UserDto;
 
-import ru.practicum.ewm.user.model.User;
+import ru.practicum.ewm.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
 
 import java.util.List;
