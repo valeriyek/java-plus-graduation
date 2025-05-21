@@ -10,13 +10,14 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    @Query("""
-        SELECT c
-        FROM Comment c
-        WHERE (:userIds is null or c.author.id in :userIds)
-        AND (:eventIds is null or c.event.id in :eventIds)
-        """)
-    List<Comment> findByAuthorIdInAndEventIdIn(List<Long> authorIds, List<Long> eventIds, Pageable pageable);
+    @Query("SELECT c FROM Comment c " +
+            "WHERE (:authorIds IS NULL OR c.authorId IN :authorIds) " +
+            "AND (:eventIds IS NULL OR c.event.id IN :eventIds)")
+    List<Comment> findByAuthorIdInAndEventIdIn(@Param("authorIds") List<Long> authorIds,
+                                               @Param("eventIds") List<Long> eventIds,
+                                               Pageable pageable);
+
+
 
 
     List<Comment> findAllByEventId(long id);
