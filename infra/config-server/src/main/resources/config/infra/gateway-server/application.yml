@@ -13,9 +13,29 @@ management:
 spring:
   cloud:
     gateway:
-      discovery.locator.enabled: true
+      discovery:
+        locator:
+          enabled: false
       routes:
-        - id: event_service_route
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/admin/users/**
+
+        - id: event-service
           uri: lb://event-service
           predicates:
-            - Path=/**
+            - Path=/events/**
+            - Path=/admin/events/**
+            - Path=/users/**
+
+        - id: request-service
+          uri: lb://request-service
+          predicates:
+            - Path=/requests/**
+
+        - id: stats-service
+          uri: lb://stats-service
+          predicates:
+            - Path=/hit/**
+            - Path=/stats/**
