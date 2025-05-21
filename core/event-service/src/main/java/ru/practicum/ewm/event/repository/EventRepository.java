@@ -22,14 +22,14 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     boolean existsByCategoryId(Long categoryId);
 
     @Query("""
-            select e from Event e
-            where (coalesce(:userIds, null) is null or e.initiator.id in :userIds)
-            and (coalesce(:states, null) is null or e.state in :states)
-            and (coalesce(:categoryIds, null) is null or e.category.id in :categoryIds)
-            and (coalesce(:rangeStart, null) is null or e.eventDate >= :rangeStart)
-            and (coalesce(:rangeEnd, null) is null or e.eventDate <= :rangeEnd)
-            order by e.id desc
-            """)
+    select e from Event e
+    where (coalesce(:userIds, null) is null or e.initiatorId in :userIds)
+    and (coalesce(:states, null) is null or e.state in :states)
+    and (coalesce(:categoryIds, null) is null or e.category.id in :categoryIds)
+    and (coalesce(:rangeStart, null) is null or e.eventDate >= :rangeStart)
+    and (coalesce(:rangeEnd, null) is null or e.eventDate <= :rangeEnd)
+    order by e.id desc
+    """)
     Page<Event> findByParams(
             @Param("userIds") List<Long> userIds,
             @Param("states") List<EventState> states,

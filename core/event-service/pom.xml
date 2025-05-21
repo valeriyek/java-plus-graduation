@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>event-service</artifactId>
-    <packaging>jar</packaging>
+
 
 
     <dependencies>
