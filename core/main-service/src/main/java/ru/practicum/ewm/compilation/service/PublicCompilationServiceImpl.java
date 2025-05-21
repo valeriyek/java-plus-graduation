@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.compilation.repository.CompilationRepository;
 import ru.practicum.ewm.compilation.model.Compilation;
-import ru.practicum.ewm.compilation.dto.CompilationDto;
-import ru.practicum.ewm.compilation.dto.mapper.CompilationMapper;
+import ru.practicum.ewm.dto.CompilationDto;
 import ru.practicum.ewm.exception.NotFoundException;
 
 import java.util.List;

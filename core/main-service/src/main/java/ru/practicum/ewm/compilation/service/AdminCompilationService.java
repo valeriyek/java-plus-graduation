@@ -1,8 +1,8 @@
 package ru.practicum.ewm.compilation.service;
 
-import ru.practicum.ewm.compilation.dto.CompilationDto;
-import ru.practicum.ewm.compilation.dto.NewCompilationDto;
-import ru.practicum.ewm.compilation.dto.UpdateCompilationRequest;
+import ru.practicum.ewm.dto.CompilationDto;
+import ru.practicum.ewm.dto.NewCompilationDto;
+import ru.practicum.ewm.dto.UpdateCompilationRequest;
 
 public interface AdminCompilationService {
 

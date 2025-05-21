@@ -7,15 +7,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.client.RequestServiceClient;
+import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.event.service.EventService;
-import ru.practicum.ewm.event.dto.EventFullDto;
-import ru.practicum.ewm.event.dto.EventShortDto;
-import ru.practicum.ewm.event.dto.NewEventDto;
-import ru.practicum.ewm.event.dto.UpdateEventUserRequest;
-import ru.practicum.ewm.request.service.RequestService;
-import ru.practicum.ewm.request.dto.EventRequestStatusUpdateRequest;
-import ru.practicum.ewm.request.dto.EventRequestStatusUpdateResult;
-import ru.practicum.ewm.request.dto.ParticipationRequestDto;
+
 
 import java.util.List;
 
@@ -26,7 +21,7 @@ import java.util.List;
 public class PrivateEventController {
 
     private final EventService eventService;
-    private final RequestService requestService;
+    private final RequestServiceClient requestService;
 
 
     @GetMapping
@@ -73,7 +68,7 @@ public class PrivateEventController {
     public ResponseEntity<List<ParticipationRequestDto>> getRequestsForUserEvent(@PathVariable Long userId,
                                                                                  @PathVariable Long eventId) {
         log.info("[GET] Запросы на участие для события {} пользователя {}", eventId, userId);
-        List<ParticipationRequestDto> requests = requestService.getRequestsForUserEvent(userId, eventId);
+        List<ParticipationRequestDto> requests = requestService.getRequestsForEvent(userId, eventId);
         return ResponseEntity.ok(requests);
     }
 

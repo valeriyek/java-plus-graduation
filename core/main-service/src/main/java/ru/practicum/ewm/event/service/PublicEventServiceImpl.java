@@ -14,11 +14,12 @@ import ru.practicum.ewm.EndpointHitInputDto;
 
 import ru.practicum.ewm.StatFeignClient;
 import ru.practicum.ewm.ViewStatsOutputDto;
+import ru.practicum.ewm.dto.EventFullDto;
+import ru.practicum.ewm.dto.EventShortDto;
+import ru.practicum.ewm.dto.EventSort;
 import ru.practicum.ewm.event.repository.EventRepository;
-import ru.practicum.ewm.event.dto.*;
-import ru.practicum.ewm.event.dto.mapper.EventMapper;
 import ru.practicum.ewm.event.model.Event;
-import ru.practicum.ewm.event.model.EventState;
+import ru.practicum.ewm.dto.EventState;
 import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.exception.NotFoundException;
 

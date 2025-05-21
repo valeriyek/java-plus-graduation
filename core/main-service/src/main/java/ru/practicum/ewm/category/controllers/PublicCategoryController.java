@@ -3,7 +3,7 @@ package ru.practicum.ewm.category.controllers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.category.dto.CategoryDto;
+import ru.practicum.ewm.dto.CategoryDto;
 import ru.practicum.ewm.category.service.PublicCategoryService;
 
 import java.util.List;

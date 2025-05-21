@@ -1,8 +1,8 @@
 package ru.practicum.ewm.comment.service;
 
-import ru.practicum.ewm.comment.dto.CommentShortDto;
-import ru.practicum.ewm.comment.dto.NewComment;
-import ru.practicum.ewm.comment.dto.UpdateCommentDto;
+import ru.practicum.ewm.dto.CommentShortDto;
+import ru.practicum.ewm.dto.NewComment;
+import ru.practicum.ewm.dto.UpdateCommentDto;
 
 import java.util.List;
 

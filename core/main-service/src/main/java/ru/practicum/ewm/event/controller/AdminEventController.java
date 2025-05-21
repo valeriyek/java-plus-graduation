@@ -6,9 +6,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.event.service.AdminEventService;
-import ru.practicum.ewm.event.dto.EventFullDto;
-import ru.practicum.ewm.event.model.EventState;
-import ru.practicum.ewm.event.dto.UpdateEventAdminRequest;
+import ru.practicum.ewm.dto.EventFullDto;
+import ru.practicum.ewm.dto.EventState;
+import ru.practicum.ewm.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm.validation.UpdateGroup;
 
 import java.time.LocalDateTime;

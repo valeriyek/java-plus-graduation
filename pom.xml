@@ -16,7 +16,6 @@
 		<module>core</module>
 		<module>infra</module>
         <module>core/category-service</module>
-		<module>core/event-service</module>
 	</modules>
 
 	<groupId>ru.practicum</groupId>

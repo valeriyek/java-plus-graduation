@@ -7,9 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ru.practicum.ewm.exception.ValidationException;
-import ru.practicum.ewm.user.dto.NewUserRequest;
-import ru.practicum.ewm.user.dto.UserDto;
-import ru.practicum.ewm.user.dto.mapper.UserMapper;
+import ru.practicum.ewm.dto.NewUserRequest;
+import ru.practicum.ewm.dto.UserDto;
 
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;

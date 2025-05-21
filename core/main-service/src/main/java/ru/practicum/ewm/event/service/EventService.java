@@ -7,18 +7,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.repository.CategoryRepository;
+import ru.practicum.ewm.client.RequestServiceClient;
+import ru.practicum.ewm.client.UserServiceClient;
+import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.event.repository.EventRepository;
-import ru.practicum.ewm.event.dto.*;
-import ru.practicum.ewm.event.dto.mapper.EventMapper;
 import ru.practicum.ewm.event.model.Event;
-import ru.practicum.ewm.event.model.EventState;
+import ru.practicum.ewm.dto.EventState;
 import ru.practicum.ewm.exception.ConflictException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.exception.ValidationException;
-import ru.practicum.ewm.feign.UserServiceClient;
-import ru.practicum.ewm.request.repository.RequestRepository;
 
-import ru.practicum.ewm.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,7 +31,7 @@ public class EventService {
 
     private final UserServiceClient userClient;
     private final CategoryRepository categoryRepository;
-    private final RequestRepository requestRepository;
+    private final RequestServiceClient requestClient;
 
     private static final long HOURS_BEFORE_EVENT = 2;
 
@@ -150,10 +148,9 @@ public class EventService {
 
 
     private Long getConfirmedRequests(Long eventId) {
-        return requestRepository.countConfirmedRequestsByEventId(eventId);
+        return requestClient.getConfirmedRequests(eventId);
     }
 
-    private Long getViews(Long eventId) {
-        return requestRepository.getViewsForEvent(eventId);
-    }
+
+
 }
