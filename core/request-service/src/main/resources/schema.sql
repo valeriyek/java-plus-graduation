@@ -6,6 +6,5 @@ CREATE TABLE IF NOT EXISTS requests
     created      TIMESTAMP NOT NULL,
     event_id     BIGINT    NOT NULL,
     requester_id BIGINT    NOT NULL,
-    status       VARCHAR   NOT NULL,
-
+    status       VARCHAR   NOT NULL
 );
