@@ -5,12 +5,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.client.UserServiceClient;
-import ru.practicum.ewm.dto.CommentShortDto;
-import ru.practicum.comment.model.Comment;
+import ru.practicum.dto.CommentShortDto;
+
 import ru.practicum.comment.repository.CommentRepository;
-import ru.practicum.ewm.dto.UserDto;
-import ru.practicum.ewm.dto.UserShortDto;
+import ru.practicum.dto.mapper.CommentMapper;
 
 
 import java.util.List;
@@ -21,25 +19,12 @@ import java.util.List;
 public class AdminCommentServiceImpl implements AdminCommentService {
 
     private final CommentRepository commentRepository;
-    private final UserServiceClient userClient;
+
 
     @Override
     public List<CommentShortDto> getCommentsByParams(List<Long> userIds, List<Long> eventIds, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from, size);
-
-        List<Comment> comments = commentRepository.findByAuthorIdInAndEventIdIn(userIds, eventIds, pageable);
-
-
-        return comments.stream()
-                .map(comment -> {
-                    UserDto userDto = userClient.getUserById(comment.getAuthorId());
-                    UserShortDto shortDto = new UserShortDto();
-                    shortDto.setId(userDto.getId());
-                    shortDto.setName(userDto.getName());
-
-                    return CommentMapper.toCommentShortDto(comment, shortDto);
-                })
-                .toList();
+        return CommentMapper.toCommentShortDto(commentRepository.findByUserIdInAndEventIdIn(userIds, eventIds, pageable));
     }
 
     @Override
@@ -47,5 +32,4 @@ public class AdminCommentServiceImpl implements AdminCommentService {
     public void deleteCommentById(Long id) {
         commentRepository.deleteById(id);
     }
-
 }

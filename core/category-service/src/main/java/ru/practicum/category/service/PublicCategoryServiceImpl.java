@@ -4,10 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm.dto.CategoryDto;
-import ru.practicum.ewm.category.model.Category;
+import ru.practicum.dto.CategoryDto;
 import ru.practicum.category.repository.CategoryRepository;
-import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.dto.mapper.CategoryMapper;
+import ru.practicum.exception.NotFoundException;
+import ru.practicum.model.Category;
 
 import java.util.List;
 import java.util.stream.Collectors;

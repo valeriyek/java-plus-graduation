@@ -7,9 +7,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.compilation.repository.CompilationRepository;
-import ru.practicum.ewm.compilation.model.Compilation;
-import ru.practicum.ewm.dto.CompilationDto;
-import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.dto.CompilationDto;
+import ru.practicum.dto.mapper.CompilationMapper;
+import ru.practicum.exception.NotFoundException;
+import ru.practicum.model.Compilation;
 
 import java.util.List;
 

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.ewm.dto.CommentShortDto;
+import ru.practicum.dto.CommentShortDto;
 import ru.practicum.comment.service.PublicCommentService;
 
 import java.util.List;

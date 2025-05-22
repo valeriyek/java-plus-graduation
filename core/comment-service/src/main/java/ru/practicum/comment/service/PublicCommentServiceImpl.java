@@ -3,12 +3,12 @@ package ru.practicum.comment.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm.client.UserServiceClient;
-import ru.practicum.ewm.dto.CommentShortDto;
-import ru.practicum.comment.model.Comment;
+import ru.practicum.client.UserServiceClient;
+import ru.practicum.dto.CommentShortDto;
+
 import ru.practicum.comment.repository.CommentRepository;
-import ru.practicum.ewm.dto.UserDto;
-import ru.practicum.ewm.dto.UserShortDto;
+import ru.practicum.dto.mapper.CommentMapper;
+import ru.practicum.model.Comment;
 
 import java.util.List;
 
@@ -24,17 +24,10 @@ public class PublicCommentServiceImpl implements PublicCommentService {
         List<Comment> comments = commentRepository.findAllByEventId(eventId);
 
         List<CommentShortDto> commentsDto = comments.stream()
-                .map(comment -> {
-                    UserDto userDto = userClient.getUserById(comment.getAuthorId());
-                    UserShortDto shortDto = new UserShortDto();
-                    shortDto.setId(userDto.getId());
-                    shortDto.setName(userDto.getName());
-
-                    return CommentMapper.toCommentShortDto(comment, shortDto);
-                })
+                .map(CommentMapper::toCommentShortDto)
                 .toList();
 
-        log.info("получен список commentsDto для event с id = {}", eventId);
+        log.info("получен список commentsDto для event с id = " + eventId);
         return commentsDto;
     }
 }

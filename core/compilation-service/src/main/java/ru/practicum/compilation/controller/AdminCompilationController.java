@@ -5,12 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.dto.CompilationDto;
-import ru.practicum.ewm.dto.NewCompilationDto;
-import ru.practicum.ewm.dto.UpdateCompilationRequest;
+import ru.practicum.dto.CompilationDto;
+import ru.practicum.dto.NewCompilationDto;
+import ru.practicum.dto.UpdateCompilationRequest;
 import ru.practicum.compilation.service.AdminCompilationService;
-import ru.practicum.ewm.validation.CreateGroup;
-import ru.practicum.ewm.validation.UpdateGroup;
+import ru.practicum.validation.CreateGroup;
+import ru.practicum.validation.UpdateGroup;
 
 @RestController
 @Slf4j

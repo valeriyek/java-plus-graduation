@@ -5,23 +5,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.client.UserServiceClient;
-import ru.practicum.ewm.dto.CommentShortDto;
-import ru.practicum.ewm.dto.NewComment;
-import ru.practicum.ewm.dto.UpdateCommentDto;
-import ru.practicum.comment.model.Comment;
+import ru.practicum.client.EventServiceClient;
+import ru.practicum.client.UserServiceClient;
+import ru.practicum.dto.CommentShortDto;
+import ru.practicum.dto.NewComment;
+import ru.practicum.dto.UpdateCommentDto;
+
 import ru.practicum.comment.repository.CommentRepository;
-import ru.practicum.ewm.dto.UserDto;
-import ru.practicum.ewm.dto.UserShortDto;
-import ru.practicum.ewm.event.model.Event;
-import ru.practicum.ewm.event.repository.EventRepository;
-import ru.practicum.ewm.exception.ForbiddenException;
-import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.dto.mapper.CommentMapper;
+import ru.practicum.exception.ForbiddenException;
+import ru.practicum.exception.NotFoundException;
+import ru.practicum.model.Comment;
+import ru.practicum.model.Event;
+import ru.practicum.model.User;
 
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,60 +29,33 @@ import java.util.stream.Collectors;
 public class PrivateCommentServiceImpl implements PrivateCommentService {
 
     private final CommentRepository commentRepository;
-    private final EventRepository eventRepository;
-    private final UserServiceClient userClient;
+    private final EventServiceClient eventServiceClient;
+    private final UserServiceClient userServiceClient;
 
     @Override
     @Transactional
     public CommentShortDto createComment(Long userId, Long eventId, NewComment newComment) {
-        UserDto user = checkUserExist(userId);
+        User user = checkUserExist(userId);
         Event event = checkEventExist(eventId);
-
-        Comment comment = CommentMapper.fromNewCommentToComment(newComment, userId, event);
-        Comment saved = commentRepository.save(comment);
-
-        UserShortDto author = new UserShortDto();
-        author.setId(user.getId());
-        author.setName(user.getName());
-
-        return CommentMapper.toCommentShortDto(saved, author);
+        Comment comment = CommentMapper.fromNewCommentToComment(newComment, user, event);
+        return CommentMapper.toCommentShortDto(commentRepository.save(comment));
     }
 
     @Override
     public List<CommentShortDto> getUserComments(Long userId, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
+        return CommentMapper.toCommentShortDto(commentRepository.findByAuthorId(userId, pageable));
 
-        List<Comment> comments = commentRepository.findByAuthorId(userId, pageable);
-        if (comments.isEmpty()) return List.of();
-
-        UserDto user = checkUserExist(userId);
-        UserShortDto author = new UserShortDto();
-        author.setId(user.getId());
-        author.setName(user.getName());
-
-        return comments.stream()
-                .map(comment -> CommentMapper.toCommentShortDto(comment, author))
-                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public CommentShortDto updateComment(Long userId, Long commentId, UpdateCommentDto updateComment) {
         Comment comment = checkCommentExistAndAuthor(commentId, userId);
-
         comment.setText(updateComment.getText());
         comment.setIsUpdated(true);
         comment.setUpdatedOn(LocalDateTime.now());
-
-        Comment updated = commentRepository.save(comment);
-
-        UserDto user = checkUserExist(userId);
-        UserShortDto author = new UserShortDto();
-        author.setId(user.getId());
-        author.setName(user.getName());
-
-        return CommentMapper.toCommentShortDto(updated, author);
-    }
+        return CommentMapper.toCommentShortDto(commentRepository.save(comment));  }
 
     @Override
     @Transactional
@@ -92,20 +65,20 @@ public class PrivateCommentServiceImpl implements PrivateCommentService {
     }
 
     private Event checkEventExist(Long id) {
-        return eventRepository.findById(id)
+        return eventServiceClient.getEventFullById(id)
                 .orElseThrow(() -> new NotFoundException("События с id = " + id + " не существует"));
     }
 
-    private UserDto checkUserExist(Long id) {
-        return userClient.getUserById(id);
-              //  .orElseThrow(() -> new NotFoundException("Пользователя с id = " + id + " не существует"));
+    private User checkUserExist(Long id) {
+        return userServiceClient.getUserById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователя с id = " + id + " не существует"));
     }
 
     private Comment checkCommentExistAndAuthor(Long commentId, Long userId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new NotFoundException("Комментарий с id = " + commentId + " не найден"));
 
-        if (!comment.getAuthorId().equals(userId)) {
+        if (!comment.getAuthor().getId().equals(userId)) {
             throw new ForbiddenException("Пользователь не является автором комментария");
         }
         return comment;

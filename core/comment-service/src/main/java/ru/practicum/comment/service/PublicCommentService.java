@@ -1,6 +1,6 @@
 package ru.practicum.comment.service;
 
-import ru.practicum.ewm.dto.CommentShortDto;
+import ru.practicum.dto.CommentShortDto;
 
 import java.util.List;
 

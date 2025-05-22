@@ -4,13 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.compilation.repository.CompilationRepository;
-import ru.practicum.ewm.dto.CompilationDto;
-import ru.practicum.ewm.compilation.model.Compilation;
-import ru.practicum.ewm.dto.NewCompilationDto;
-import ru.practicum.ewm.dto.UpdateCompilationRequest;
-import ru.practicum.ewm.event.repository.EventRepository;
-import ru.practicum.ewm.event.model.Event;
-import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.client.EventServiceClient;
+import ru.practicum.dto.CompilationDto;
+
+import ru.practicum.dto.NewCompilationDto;
+import ru.practicum.dto.UpdateCompilationRequest;
+import ru.practicum.dto.mapper.CompilationMapper;
+
+import ru.practicum.exception.NotFoundException;
+import ru.practicum.model.Compilation;
+import ru.practicum.model.Event;
 
 import java.util.Set;
 
@@ -20,7 +23,7 @@ import java.util.Set;
 public class AdminCompilationServiceImpl implements AdminCompilationService {
 
     private final CompilationRepository compilationRepository;
-    private final EventRepository eventRepository;
+    private final EventServiceClient eventServiceClient;
 
     @Override
     @Transactional
@@ -55,13 +58,13 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
 
     private Compilation loadEventsIntoCompilation(NewCompilationDto newCompilationDto) {
         Compilation compilation = CompilationMapper.toCompilation(newCompilationDto);
-        Set<Event> events = eventRepository.findByIdIn(newCompilationDto.getEvents());
+        Set<Event> events = eventServiceClient.findByIdIn(newCompilationDto.getEvents());
         compilation.setEvents(events);
         return compilation;
     }
 
     private Compilation loadEventsIntoCompilation(Compilation compilation, UpdateCompilationRequest updateCompilationRequest) {
-        Set<Event> events = eventRepository.findByIdIn(updateCompilationRequest.getEvents());
+        Set<Event> events = eventServiceClient.findByIdIn(updateCompilationRequest.getEvents());
         compilation.setEvents(events);
         return compilation;
     }
@@ -70,5 +73,4 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         return compilationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Подборки событий с id = " + id + " не существует"));
     }
-
 }
