@@ -6,7 +6,7 @@ import ru.practicum.dto.*;
 
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
-import ru.practicum.model.User;
+import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

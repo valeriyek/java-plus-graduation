@@ -17,7 +17,7 @@ import ru.practicum.exception.ForbiddenException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.model.Comment;
 import ru.practicum.model.Event;
-import ru.practicum.model.User;
+import ru.practicum.user.model.User;
 
 
 import java.time.LocalDateTime;

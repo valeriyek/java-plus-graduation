@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.practicum.dto.NewUserRequest;
 import ru.practicum.dto.UserDto;
-import ru.practicum.model.User;
+import ru.practicum.user.model.User;
 import ru.practicum.user.service.AdminUserService;
 import ru.practicum.validation.CreateGroup;
 

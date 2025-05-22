@@ -3,7 +3,7 @@ package ru.practicum.dto.mapper;
 import ru.practicum.dto.NewUserRequest;
 import ru.practicum.dto.UserDto;
 import ru.practicum.dto.UserShortDto;
-import ru.practicum.model.User;
+import ru.practicum.user.model.User;
 
 import java.util.ArrayList;
 import java.util.List;

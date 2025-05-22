@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import ru.practicum.dto.RequestStatus;
+import ru.practicum.user.model.User;
 
 
 import java.time.LocalDateTime;

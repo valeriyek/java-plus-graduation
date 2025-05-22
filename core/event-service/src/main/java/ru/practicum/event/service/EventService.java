@@ -18,7 +18,7 @@ import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
-import ru.practicum.model.User;
+import ru.practicum.user.model.User;
 
 
 import java.time.LocalDateTime;

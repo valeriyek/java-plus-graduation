@@ -11,7 +11,7 @@ import ru.practicum.exception.ValidationException;
 import ru.practicum.dto.NewUserRequest;
 import ru.practicum.dto.UserDto;
 
-import ru.practicum.model.User;
+import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
 import java.util.List;

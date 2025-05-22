@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import ru.practicum.dto.EventState;
 import ru.practicum.dto.Location;
+import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 

@@ -5,7 +5,7 @@ import ru.practicum.dto.CommentShortDto;
 import ru.practicum.dto.NewComment;
 import ru.practicum.model.Comment;
 import ru.practicum.model.Event;
-import ru.practicum.model.User;
+import ru.practicum.user.model.User;
 
 
 import java.time.LocalDateTime;
