@@ -1,40 +1,48 @@
 package ru.practicum.compilation.model;
 
-
 import ru.practicum.dto.CompilationDto;
 import ru.practicum.dto.NewCompilationDto;
-import ru.practicum.event.model.EventMapper;
-import ru.practicum.event.model.Event;
+import ru.practicum.dto.EventShortDto;
 
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CompilationMapper {
 
-    public static CompilationDto toCompilationDto(Compilation compilation) {
-        CompilationDto compilationDto = new CompilationDto();
-        compilationDto.setId(compilation.getId());
-        compilationDto.setPinned(compilation.getPinned());
-        compilationDto.setTitle(compilation.getTitle());
-        compilationDto.setEvents(new HashSet<>(EventMapper.toEventShortDto(compilation.getEvents())));
-        return compilationDto;
+    public static CompilationDto toCompilationDto(
+            Compilation compilation,
+            Map<Long, EventShortDto> eventShortDtoMap
+    ) {
+        CompilationDto dto = new CompilationDto();
+        dto.setId(compilation.getId());
+        dto.setPinned(compilation.getPinned());
+        dto.setTitle(compilation.getTitle());
+
+        Set<EventShortDto> events = compilation.getEventIds().stream()
+                .map(eventShortDtoMap::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        dto.setEvents(events);
+        return dto;
     }
 
-    public static List<CompilationDto> toCompilationDto(Iterable<Compilation> compilations) {
+    public static List<CompilationDto> toCompilationDto(
+            Iterable<Compilation> compilations,
+            Map<Long, EventShortDto> eventShortDtoMap
+    ) {
         List<CompilationDto> result = new ArrayList<>();
         for (Compilation compilation : compilations) {
-            result.add(toCompilationDto(compilation));
+            result.add(toCompilationDto(compilation, eventShortDtoMap));
         }
         return result;
     }
 
-    public static Compilation toCompilation(NewCompilationDto newCompilationDto) {
+    public static Compilation toCompilation(NewCompilationDto newDto) {
         Compilation compilation = new Compilation();
-        compilation.setEvents(new HashSet<Event>());
-        compilation.setPinned(newCompilationDto.getPinned());
-        compilation.setTitle(newCompilationDto.getTitle());
+        compilation.setPinned(newDto.getPinned());
+        compilation.setTitle(newDto.getTitle());
+        // События добавляешь отдельно, если надо
         return compilation;
     }
 }

@@ -16,6 +16,6 @@ public class EventShortDto {
     private String title;
     private Long confirmedRequests;
     private Long views;
-    private UserShortDto initiator;
-    private CategoryDto category;
+    private Long initiatorId;
+    private Long categoryId;
 }

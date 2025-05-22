@@ -7,26 +7,37 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.compilation.repository.CompilationRepository;
+import ru.practicum.client.EventServiceClient;
 import ru.practicum.dto.CompilationDto;
+import ru.practicum.dto.EventShortDto;
 import ru.practicum.compilation.model.CompilationMapper;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.compilation.model.Compilation;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class PublicCompilationServiceImpl implements PublicCompilationService {
     private final CompilationRepository compilationRepository;
+    private final EventServiceClient eventServiceClient;
 
     @Override
     @Transactional(readOnly = true)
     public CompilationDto getCompilationById(long id) {
-        CompilationDto compilationDto = CompilationMapper
-                .toCompilationDto(compilationRepository.findById(id)
-                        .orElseThrow(() -> new NotFoundException("Подборка с " + id + "не найдена")));
-        return compilationDto;
+        Compilation compilation = compilationRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Подборка с " + id + " не найдена"));
+
+        // Собрать eventIds из подборки
+        Set<Long> eventIds = compilation.getEventIds();
+        Set<EventShortDto> eventShorts = eventServiceClient.findByIdIn(eventIds);
+        Map<Long, EventShortDto> eventShortDtoMap = new HashMap<>();
+        for (EventShortDto dto : eventShorts) {
+            eventShortDtoMap.put(dto.getId(), dto);
+        }
+
+        return CompilationMapper.toCompilationDto(compilation, eventShortDtoMap);
     }
 
     @Override
@@ -39,9 +50,26 @@ public class PublicCompilationServiceImpl implements PublicCompilationService {
             pageCompilations = compilationRepository.findAll(page);
         }
 
-        List<CompilationDto> compilationsDto = CompilationMapper.toCompilationDto(pageCompilations);
-        log.info("получен список compilationsDto from = " + from + " size " + size);
+        List<Compilation> compilations = pageCompilations.getContent();
 
+        // Собираем все eventIds со всех подборок, чтобы одним запросом получить все EventShortDto
+        Set<Long> allEventIds = new HashSet<>();
+        for (Compilation c : compilations) {
+            allEventIds.addAll(c.getEventIds());
+        }
+
+        Set<EventShortDto> allEventShorts = eventServiceClient.findByIdIn(allEventIds);
+        Map<Long, EventShortDto> eventShortDtoMap = new HashMap<>();
+        for (EventShortDto dto : allEventShorts) {
+            eventShortDtoMap.put(dto.getId(), dto);
+        }
+
+        List<CompilationDto> compilationsDto = new ArrayList<>();
+        for (Compilation c : compilations) {
+            compilationsDto.add(CompilationMapper.toCompilationDto(c, eventShortDtoMap));
+        }
+
+        log.info("получен список compilationsDto from = " + from + " size " + size);
         return compilationsDto;
     }
 }

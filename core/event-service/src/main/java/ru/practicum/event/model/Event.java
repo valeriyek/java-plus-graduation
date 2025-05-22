@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import ru.practicum.dto.EventState;
 import ru.practicum.dto.Location;
-import ru.practicum.user.model.User;
+
 
 import java.time.LocalDateTime;
 
@@ -53,17 +53,14 @@ public class Event {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @JoinColumn(name = "initiator_id")
-    private User initiator;
+    @Column(name = "initiator_id", nullable = false)
+    private Long initiatorId;
 
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @JoinColumn(name = "category_id")
-    private Category category;
+
+    @Column(name = "category_id", nullable = false)
+    private Long categoryId;
 
     @Column(name = "views", nullable = false)
     private Long views = 0L;
