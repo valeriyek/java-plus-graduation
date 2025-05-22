@@ -1,7 +1,7 @@
-package ru.practicum.mapper;
+package ru.practicum.ewm.mapper;
 
 import ru.practicum.EndpointHitInputDto;
-import ru.practicum.model.EndpointHit;
+import ru.practicum.ewm.model.EndpointHit;
 
 public class EndpointHitMapper {
     public static EndpointHit toEndpointHit(EndpointHitInputDto endpointHitInputDto) {

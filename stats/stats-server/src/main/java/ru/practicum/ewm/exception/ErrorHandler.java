@@ -1,4 +1,4 @@
-package ru.practicum.exception;
+package ru.practicum.ewm.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
