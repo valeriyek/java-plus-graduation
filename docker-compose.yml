@@ -1,42 +1,34 @@
-version: '3.8'
-
 services:
-  postgres-db:
+
+  stats-db:
     image: postgres:16.1
-    container_name: postgres-ewm-db
-    environment:
-      POSTGRES_USER: dbuser
-      POSTGRES_PASSWORD: 12345
-      POSTGRES_DB: postgres
+    container_name: stats-db
     ports:
       - "6541:5432"
-    networks:
-      - ewm-net
+    volumes:
+      - ./stats/stats-server/src/main/resources/db:/var/lib/postgresql/data
+      - ./stats/stats-server/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    environment:
+      - POSTGRES_DB=statsdb
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=12345
     healthcheck:
-      test: pg_isready -q -d postgres -U dbuser
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
       interval: 5s
       retries: 10
 
-  db-init:
+  main-db:
     image: postgres:16.1
-    container_name: db-init
-    depends_on:
-      postgres-db:
-        condition: service_healthy
-    networks:
-      - ewm-net
-    entrypoint:
-      - bash
-      - -c
-      - |
-        set -e
-        psql postgresql://dbuser:12345@postgres-ewm-db:5432/postgres -v ON_ERROR_STOP=1 <<-EOSQL
-          CREATE DATABASE userdb;
-          CREATE DATABASE eventdb;
-          CREATE DATABASE requestdb;
-          CREATE DATABASE statsdb;
-        EOSQL
-
-networks:
-  ewm-net:
+    container_name: main-db
+    ports:
+      - "6542:5432"
+    environment:
+      - POSTGRES_DB=maindb
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=12345
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10

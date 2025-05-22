@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.client.EventServiceClient;
 
 import ru.practicum.client.UserServiceClient;
+
 import ru.practicum.dto.*;
 import ru.practicum.model.Event;
 import ru.practicum.model.RequestMapper;
