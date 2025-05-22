@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:6543/userdb
+    url: jdbc:postgresql://localhost:6542/maindb
     username: dbuser
     password: 12345
 
@@ -19,3 +19,11 @@ spring:
   sql:
     init:
       mode: always
+  cloud:
+    openfeign:
+      okhttp:
+        enabled: true
+      circuitbreaker:
+        enabled: true
+  app:
+    name: ewm-main
