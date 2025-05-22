@@ -11,6 +11,8 @@ import ru.practicum.dto.mapper.CategoryMapper;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.model.Category;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -56,5 +58,9 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         if (eventServiceClient.existsByCategoryId(id)) {
             throw new ValidationException("Нельзя удалить категорию, с которой связаны события");
         }
+    }
+    @Override
+    public Optional<Category> getFullCategoryById(long id) {
+        return categoryRepository.findById(id);
     }
 }
