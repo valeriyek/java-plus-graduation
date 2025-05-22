@@ -16,8 +16,8 @@ import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
-import ru.practicum.model.Category;
-import ru.practicum.model.Event;
+import ru.practicum.category.model.Category;
+import ru.practicum.event.model.Event;
 import ru.practicum.user.model.User;
 
 

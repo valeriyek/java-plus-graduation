@@ -4,7 +4,7 @@ package ru.practicum.compilation.model;
 import ru.practicum.dto.CompilationDto;
 import ru.practicum.dto.NewCompilationDto;
 import ru.practicum.event.model.EventMapper;
-import ru.practicum.model.Event;
+import ru.practicum.event.model.Event;
 
 
 import java.util.ArrayList;

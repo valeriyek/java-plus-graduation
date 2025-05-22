@@ -1,4 +1,4 @@
-package ru.practicum.model;
+package ru.practicum.event.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

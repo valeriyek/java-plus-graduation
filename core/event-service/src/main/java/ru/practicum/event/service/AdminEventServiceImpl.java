@@ -17,7 +17,7 @@ import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
-import ru.practicum.model.Event;
+import ru.practicum.event.model.Event;
 
 
 import java.time.LocalDateTime;

@@ -6,9 +6,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.CategoryDto;
 import ru.practicum.category.repository.CategoryRepository;
-import ru.practicum.dto.mapper.CategoryMapper;
+import ru.practicum.category.model.CategoryMapper;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.model.Category;
+import ru.practicum.category.model.Category;
 
 import java.util.List;
 import java.util.stream.Collectors;

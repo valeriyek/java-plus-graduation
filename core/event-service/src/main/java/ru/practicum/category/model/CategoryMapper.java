@@ -1,9 +1,8 @@
-package ru.practicum.dto.mapper;
+package ru.practicum.category.model;
 
 
 import ru.practicum.dto.CategoryDto;
 import ru.practicum.dto.NewCategoryDto;
-import ru.practicum.model.Category;
 
 public class CategoryMapper {
     public static Category mapToCategory(NewCategoryDto newCategoryDto) {

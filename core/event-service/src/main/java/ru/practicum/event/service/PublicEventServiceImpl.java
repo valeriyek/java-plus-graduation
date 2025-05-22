@@ -22,7 +22,7 @@ import ru.practicum.event.model.EventMapper;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.model.Event;
+import ru.practicum.event.model.Event;
 
 import java.time.LocalDateTime;
 import java.util.*;

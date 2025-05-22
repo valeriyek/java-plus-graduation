@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.category.service.AdminCategoryService;
 import ru.practicum.dto.CategoryDto;
 import ru.practicum.category.service.PublicCategoryService;
-import ru.practicum.model.Category;
+import ru.practicum.category.model.Category;
 
 import java.util.List;
 import java.util.Optional;
