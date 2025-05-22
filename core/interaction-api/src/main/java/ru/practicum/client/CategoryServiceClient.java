@@ -3,7 +3,7 @@ package ru.practicum.client;
 import feign.FeignException;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.model.Category;
+import ru.practicum.dto.CategoryDto;
 
 
 import java.util.Optional;
@@ -12,6 +12,6 @@ import java.util.Optional;
 public interface CategoryServiceClient {
 
     @GetMapping("/{catId}/full")
-    Optional<Category> getFullCategoriesById(@PathVariable long catId) throws FeignException;
+    Optional<CategoryDto> getFullCategoriesById(@PathVariable long catId) throws FeignException;
 
 }
