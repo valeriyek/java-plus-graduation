@@ -7,8 +7,8 @@ import ru.practicum.client.UserServiceClient;
 import ru.practicum.dto.CommentShortDto;
 
 import ru.practicum.comment.repository.CommentRepository;
-import ru.practicum.dto.mapper.CommentMapper;
-import ru.practicum.model.Comment;
+import ru.practicum.comment.model.CommentMapper;
+import ru.practicum.comment.model.Comment;
 
 import java.util.List;
 

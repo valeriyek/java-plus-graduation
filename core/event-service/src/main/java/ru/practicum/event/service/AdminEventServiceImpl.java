@@ -12,7 +12,7 @@ import ru.practicum.dto.EventFullDto;
 import ru.practicum.dto.EventState;
 import ru.practicum.dto.StateAction;
 import ru.practicum.dto.UpdateEventAdminRequest;
-import ru.practicum.dto.mapper.EventMapper;
+import ru.practicum.event.model.EventMapper;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;

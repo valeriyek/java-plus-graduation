@@ -23,3 +23,32 @@ CREATE TABLE IF NOT EXISTS events
 
 );
 
+DROP TABLE IF EXISTS categories;
+
+CREATE TABLE if NOT EXISTS categories
+(
+    id   BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR NOT NULL UNIQUE
+);
+
+DROP TABLE IF EXISTS comments;
+
+CREATE TABLE comments
+(
+    id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    text         VARCHAR,
+    author_id    BIGINT,
+    event_id     BIGINT,
+    published_on TIMESTAMP WITHOUT TIME ZONE,
+    is_updated   BOOLEAN,
+    updated_on   TIMESTAMP WITHOUT TIME ZONE
+);
+
+DROP TABLE IF EXISTS compilations;
+
+CREATE TABLE IF NOT EXISTS compilations
+(
+    id     BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    title  VARCHAR NOT NULL,
+    pinned BOOLEAN NOT NULL
+);

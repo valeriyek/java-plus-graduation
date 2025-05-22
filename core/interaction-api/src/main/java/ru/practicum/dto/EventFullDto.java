@@ -27,7 +27,4 @@ public class EventFullDto {
     private CategoryDto category;
     private Long confirmedRequests; // Количество подтверждённых заявок
     private Long views; // Количество просмотров
-    public Boolean getRequestModeration() {
-        return requestModeration;
-    }
 }

@@ -9,11 +9,10 @@ import ru.practicum.dto.CompilationDto;
 
 import ru.practicum.dto.NewCompilationDto;
 import ru.practicum.dto.UpdateCompilationRequest;
-import ru.practicum.dto.mapper.CompilationMapper;
+import ru.practicum.compilation.model.CompilationMapper;
 
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.model.Compilation;
-import ru.practicum.model.Event;
+import ru.practicum.compilation.model.Compilation;
 
 import java.util.Set;
 
@@ -58,14 +57,15 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
 
     private Compilation loadEventsIntoCompilation(NewCompilationDto newCompilationDto) {
         Compilation compilation = CompilationMapper.toCompilation(newCompilationDto);
-        Set<Event> events = eventServiceClient.findByIdIn(newCompilationDto.getEvents());
-        compilation.setEvents(events);
+
+        Set<Long> eventIds = newCompilationDto.getEvents();
+        compilation.setEventIds(eventIds);
         return compilation;
     }
 
     private Compilation loadEventsIntoCompilation(Compilation compilation, UpdateCompilationRequest updateCompilationRequest) {
-        Set<Event> events = eventServiceClient.findByIdIn(updateCompilationRequest.getEvents());
-        compilation.setEvents(events);
+        Set<Long> eventIds = updateCompilationRequest.getEvents();
+        compilation.setEventIds(eventIds);
         return compilation;
     }
 

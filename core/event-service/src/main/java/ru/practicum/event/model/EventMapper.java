@@ -1,9 +1,10 @@
-package ru.practicum.dto.mapper;
+package ru.practicum.event.model;
 
 
 
 import ru.practicum.dto.*;
 
+import ru.practicum.dto.mapper.CategoryMapper;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
 import ru.practicum.user.model.User;

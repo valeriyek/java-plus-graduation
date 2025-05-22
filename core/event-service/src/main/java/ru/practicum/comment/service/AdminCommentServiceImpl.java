@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.CommentShortDto;
 
 import ru.practicum.comment.repository.CommentRepository;
-import ru.practicum.dto.mapper.CommentMapper;
+import ru.practicum.comment.model.CommentMapper;
 
 
 import java.util.List;

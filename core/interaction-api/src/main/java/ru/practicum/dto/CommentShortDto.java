@@ -15,7 +15,7 @@ public class CommentShortDto {
 
     private Long eventId;
 
-    private UserShortDto author;
+    private Long authorId;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;

@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.dto.CompilationDto;
-import ru.practicum.dto.mapper.CompilationMapper;
+import ru.practicum.compilation.model.CompilationMapper;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.model.Compilation;
+import ru.practicum.compilation.model.Compilation;
 
 import java.util.List;
 

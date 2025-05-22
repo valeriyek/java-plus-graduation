@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ru.practicum.dto.mapper.UserMapper;
+import ru.practicum.user.model.UserMapper;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.dto.NewUserRequest;
 import ru.practicum.dto.UserDto;
@@ -49,4 +49,8 @@ public class AdminUserService {
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
+    public Optional<UserDto> getUserDtoById(Long id) {
+        return userRepository.findById(id).map(UserMapper::toUserDto);
+    }
+
 }

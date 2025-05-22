@@ -12,12 +12,10 @@ import ru.practicum.dto.NewComment;
 import ru.practicum.dto.UpdateCommentDto;
 
 import ru.practicum.comment.repository.CommentRepository;
-import ru.practicum.dto.mapper.CommentMapper;
+import ru.practicum.comment.model.CommentMapper;
 import ru.practicum.exception.ForbiddenException;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.model.Comment;
-import ru.practicum.model.Event;
-import ru.practicum.user.model.User;
+import ru.practicum.comment.model.Comment;
 
 
 import java.time.LocalDateTime;
@@ -35,11 +33,12 @@ public class PrivateCommentServiceImpl implements PrivateCommentService {
     @Override
     @Transactional
     public CommentShortDto createComment(Long userId, Long eventId, NewComment newComment) {
-        User user = checkUserExist(userId);
-        Event event = checkEventExist(eventId);
-        Comment comment = CommentMapper.fromNewCommentToComment(newComment, user, event);
+        checkUserExist(userId);
+        checkEventExist(eventId);
+        Comment comment = CommentMapper.fromNewCommentToComment(newComment, userId, eventId);
         return CommentMapper.toCommentShortDto(commentRepository.save(comment));
     }
+
 
     @Override
     public List<CommentShortDto> getUserComments(Long userId, Integer from, Integer size) {
@@ -64,23 +63,25 @@ public class PrivateCommentServiceImpl implements PrivateCommentService {
         commentRepository.delete(comment);
     }
 
-    private Event checkEventExist(Long id) {
-        return eventServiceClient.getEventFullById(id)
-                .orElseThrow(() -> new NotFoundException("События с id = " + id + " не существует"));
+    private void checkEventExist(Long id) {
+        if (eventServiceClient.getEventFullById(id).isEmpty()) {
+            throw new NotFoundException("События с id = " + id + " не существует");
+        }
+    }
+    private void checkUserExist(Long id) {
+        if (userServiceClient.getUserById(id).isEmpty()) {
+            throw new NotFoundException("Пользователя с id = " + id + " не существует");
+        }
     }
 
-    private User checkUserExist(Long id) {
-        return userServiceClient.getUserById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователя с id = " + id + " не существует"));
-    }
 
     private Comment checkCommentExistAndAuthor(Long commentId, Long userId) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new NotFoundException("Комментарий с id = " + commentId + " не найден"));
-
-        if (!comment.getAuthor().getId().equals(userId)) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException("Комментарий с id = " + commentId + " не найден"));
+        if (!comment.getAuthorId().equals(userId)) {
             throw new ForbiddenException("Пользователь не является автором комментария");
         }
         return comment;
     }
+
 }

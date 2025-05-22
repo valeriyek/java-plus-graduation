@@ -1,10 +1,8 @@
-package ru.practicum.model;
+package ru.practicum.comment.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
-import ru.practicum.user.model.User;
 
 
 import java.time.LocalDateTime;
@@ -21,14 +19,9 @@ public class Comment {
     @Column
     private String text;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    private User author;
+    private Long authorId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @JoinColumn(name = "event_id")
-    private Event event;
+    private Long eventId;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;

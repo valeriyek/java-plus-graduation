@@ -53,9 +53,9 @@ public class AdminUserController {
     }
 
     @GetMapping("/{id}")
-    public Optional<User> getUserById(@PathVariable Long id) {
+    public Optional<UserDto> getUserById(@PathVariable Long id) {
         log.info("Поступил запрос Get /admin/users/{} на получение User с id = {}", id, id);
-        Optional<User> response = adminUserService.getUserById(id);
+        Optional<UserDto> response = adminUserService.getUserDtoById(id);
         log.info("Сформирован ответ Get /admin/users/{} с телом: {}", id, response);
         return response;
     }

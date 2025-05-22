@@ -1,9 +1,9 @@
-package ru.practicum.dto.mapper;
+package ru.practicum.compilation.model;
 
 
 import ru.practicum.dto.CompilationDto;
 import ru.practicum.dto.NewCompilationDto;
-import ru.practicum.model.Compilation;
+import ru.practicum.event.model.EventMapper;
 import ru.practicum.model.Event;
 
 

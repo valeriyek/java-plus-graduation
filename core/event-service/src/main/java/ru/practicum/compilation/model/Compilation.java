@@ -1,9 +1,10 @@
-package ru.practicum.model;
+package ru.practicum.compilation.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
 
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -21,12 +22,9 @@ public class Compilation {
     @Column(name = "pinned")
     private Boolean pinned;
 
-    @ManyToMany
-    @JoinTable(
-            name = "compilation_events",
-            joinColumns = @JoinColumn(name = "compilation_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id")
-    )
-    private Set<Event> events;
+    @ElementCollection
+    @CollectionTable(name = "compilation_events", joinColumns = @JoinColumn(name = "compilation_id"))
+    @Column(name = "event_id")
+    private Set<Long> eventIds = new HashSet<>();
 
 }

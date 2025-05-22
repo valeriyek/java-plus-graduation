@@ -1,7 +1,7 @@
-package ru.practicum.dto.mapper;
+package ru.practicum.request.model;
 
 import ru.practicum.dto.ParticipationRequestDto;
-import ru.practicum.model.ParticipationRequest;
+
 
 public class RequestMapper {
 
@@ -9,8 +9,10 @@ public class RequestMapper {
         ParticipationRequestDto dto = new ParticipationRequestDto();
         dto.setId(request.getId());
         dto.setCreated(request.getCreated());
-        dto.setEvent(request.getEvent().getId());
-        dto.setRequester(request.getRequester().getId());
+        //dto.setEvent(request.getEvent().getId());
+        //dto.setRequester(request.getRequester().getId());
+        dto.setEvent(request.getEventId());
+        dto.setRequester(request.getRequesterId());
         dto.setStatus(request.getStatus().name());
         return dto;
     }

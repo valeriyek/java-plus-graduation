@@ -7,13 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.client.EventServiceClient;
 import ru.practicum.client.UserServiceClient;
 import ru.practicum.dto.*;
-import ru.practicum.dto.mapper.RequestMapper;
+import ru.practicum.request.model.RequestMapper;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ParticipantLimitReachedException;
 import ru.practicum.exception.ValidationException;
-import ru.practicum.model.Event;
-import ru.practicum.model.ParticipationRequest;
-import ru.practicum.user.model.User;
+
+import ru.practicum.request.model.ParticipationRequest;
+
 import ru.practicum.request.repository.RequestRepository;
 
 import java.time.LocalDateTime;
@@ -39,9 +39,10 @@ public class RequestService {
 
     @Transactional
     public ParticipationRequestDto addRequest(Long userId, Long eventId) {
-        User user = getUserOrThrow(userId);
-        Event event = getEventOrThrow(eventId);
-
+//        User user = getUserOrThrow(userId);
+//        Event event = getEventOrThrow(eventId);
+        getUserOrThrow(userId);
+        EventFullDto event = getEventOrThrow(eventId);
 
         if (event.getInitiator().getId().equals(userId)) {
             throw new ValidationException("Инициатор события не может добавить запрос на участие в своём событии.");
@@ -59,8 +60,8 @@ public class RequestService {
 
         ParticipationRequest request = new ParticipationRequest();
         request.setCreated(LocalDateTime.now());
-        request.setEvent(event);
-        request.setRequester(user);
+        request.setEventId(eventId);
+        request.setRequesterId(userId);
 /* Условие !event.isRequestModeration()- если для события не требуется премодерация заявок на участие, то заявка должна автоматически переходить в статус CONFIRMED.
 "Если для события отключена пре-модерация запросов на участие, то запрос должен автоматически перейти в состояние подтвержденного".
 Условие event.getParticipantLimit() == 0 - если нет ограничения на количество участников (лимит равен 0), заявка тоже должна автоматически подтверждаться.
@@ -87,7 +88,7 @@ public class RequestService {
         ParticipationRequest updatedRequest = requestRepository.save(request);
 
         if (wasConfirmed) {
-            updateConfirmedRequests(request.getEvent().getId());
+            updateConfirmedRequests(request.getEventId());
         }
 
 
@@ -97,7 +98,7 @@ public class RequestService {
 
     public List<ParticipationRequestDto> getRequestsForUserEvent(Long userId, Long eventId) {
         getUserOrThrow(userId);
-        Event event = getEventOrThrow(eventId);
+        EventFullDto event = getEventOrThrow(eventId);
         if (!event.getInitiator().getId().equals(userId)) {
             throw new NotFoundException("Событие не принадлежит пользователю id=" + userId);
         }
@@ -108,7 +109,7 @@ public class RequestService {
 
     @Transactional
     public EventRequestStatusUpdateResult changeRequestsStatus(Long userId, Long eventId, EventRequestStatusUpdateRequest statusUpdateRequest) {
-        Event event = getEventOrThrow(eventId);
+        EventFullDto event = getEventOrThrow(eventId);
         if (!event.getInitiator().getId().equals(userId)) {
             throw new NotFoundException("Событие не принадлежит пользователю id=" + userId);
         }
@@ -154,7 +155,7 @@ public class RequestService {
         Long confirmedRequests = requestRepository.countConfirmedRequestsByEventId(eventId);
         confirmedRequests = (confirmedRequests == null) ? 0 : confirmedRequests;
 
-        Event event = eventServiceClient.getEventFullById(eventId).orElseThrow(() -> new NotFoundException("Событие с id=" + eventId + " не найдено"));
+        EventFullDto event = eventServiceClient.getEventFullById(eventId).orElseThrow(() -> new NotFoundException("Событие с id=" + eventId + " не найдено"));
         event.setConfirmedRequests(confirmedRequests);
         eventServiceClient.saveEvent(event);
     }
@@ -166,7 +167,7 @@ public class RequestService {
         return confirmedRequests;
     }
 
-    private Event getEventOrThrow(Long eventId) {
+    private EventFullDto getEventOrThrow(Long eventId) {
         return eventServiceClient.getEventFullById(eventId)
                 .orElseThrow(() -> {
                     log.error("Событие с id={} не найдено", eventId);
@@ -175,7 +176,7 @@ public class RequestService {
     }
 
 
-    private User getUserOrThrow(Long id) {
+    private UserDto getUserOrThrow(Long id) {
         return userServiceClient.getUserById(id)
                 .orElseThrow(() -> {
                     log.error("Пользователь с id={} не найден", id);

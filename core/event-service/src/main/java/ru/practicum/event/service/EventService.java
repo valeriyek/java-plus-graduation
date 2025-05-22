@@ -10,7 +10,7 @@ import ru.practicum.client.CategoryServiceClient;
 import ru.practicum.client.RequestServiceClient;
 import ru.practicum.client.UserServiceClient;
 import ru.practicum.dto.*;
-import ru.practicum.dto.mapper.EventMapper;
+import ru.practicum.event.model.EventMapper;
 
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.ConflictException;
