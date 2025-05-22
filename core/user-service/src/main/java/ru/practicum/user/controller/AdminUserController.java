@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.practicum.dto.NewUserRequest;
 import ru.practicum.dto.UserDto;
-import ru.practicum.user.model.User;
+import ru.practicum.model.User;
 import ru.practicum.user.service.AdminUserService;
 import ru.practicum.validation.CreateGroup;
 
@@ -53,9 +53,9 @@ public class AdminUserController {
     }
 
     @GetMapping("/{id}")
-    public Optional<UserDto> getUserById(@PathVariable Long id) {
+    public Optional<User> getUserById(@PathVariable Long id) {
         log.info("Поступил запрос Get /admin/users/{} на получение User с id = {}", id, id);
-        Optional<UserDto> response = adminUserService.getUserDtoById(id);
+        Optional<User> response = adminUserService.getUserById(id);
         log.info("Сформирован ответ Get /admin/users/{} с телом: {}", id, response);
         return response;
     }

@@ -6,12 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ru.practicum.user.model.UserMapper;
+import ru.practicum.model.UserMapper;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.dto.NewUserRequest;
 import ru.practicum.dto.UserDto;
 
-import ru.practicum.user.model.User;
+import ru.practicum.model.User;
 import ru.practicum.user.repository.UserRepository;
 
 import java.util.List;
@@ -41,16 +41,17 @@ public class AdminUserService {
         userRepository.deleteById(id);
     }
 
+    public Optional<User> getUserById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    public List<User> getUsersWithIds(List<Long> ids) {
+        return userRepository.findAllById(ids);
+    }
+
     private void checkDuplicateUserByEmail(NewUserRequest user) {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new ValidationException("Пользователь с email = " + user.getEmail() + " уже существует");
         }
     }
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
-    }
-    public Optional<UserDto> getUserDtoById(Long id) {
-        return userRepository.findById(id).map(UserMapper::toUserDto);
-    }
-
 }

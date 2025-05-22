@@ -9,7 +9,7 @@ import ru.practicum.dto.EventFullDto;
 import ru.practicum.dto.EventState;
 import ru.practicum.dto.UpdateEventAdminRequest;
 import ru.practicum.event.service.AdminEventService;
-import ru.practicum.event.model.Event;
+import ru.practicum.model.Event;
 import ru.practicum.validation.UpdateGroup;
 
 

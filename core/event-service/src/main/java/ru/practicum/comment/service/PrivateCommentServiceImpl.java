@@ -6,16 +6,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.client.EventServiceClient;
-import ru.practicum.client.UserServiceClient;
+import ru.practicum.client.UserServiceMainClient;
 import ru.practicum.dto.CommentShortDto;
 import ru.practicum.dto.NewComment;
 import ru.practicum.dto.UpdateCommentDto;
 
 import ru.practicum.comment.repository.CommentRepository;
-import ru.practicum.comment.model.CommentMapper;
+import ru.practicum.model.CommentMapper;
 import ru.practicum.exception.ForbiddenException;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.comment.model.Comment;
+import ru.practicum.model.Comment;
 
 
 import java.time.LocalDateTime;
@@ -28,7 +28,7 @@ public class PrivateCommentServiceImpl implements PrivateCommentService {
 
     private final CommentRepository commentRepository;
     private final EventServiceClient eventServiceClient;
-    private final UserServiceClient userServiceClient;
+    private final UserServiceMainClient userServiceMainClient;
 
     @Override
     @Transactional
@@ -69,7 +69,7 @@ public class PrivateCommentServiceImpl implements PrivateCommentService {
         }
     }
     private void checkUserExist(Long id) {
-        if (userServiceClient.getUserById(id).isEmpty()) {
+        if (userServiceMainClient.getUserById(id).isEmpty()) {
             throw new NotFoundException("Пользователя с id = " + id + " не существует");
         }
     }

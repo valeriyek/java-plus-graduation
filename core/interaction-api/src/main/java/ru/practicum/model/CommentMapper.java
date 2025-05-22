@@ -1,4 +1,4 @@
-package ru.practicum.comment.model;
+package ru.practicum.model;
 
 
 import ru.practicum.dto.CommentShortDto;
@@ -11,29 +11,27 @@ import java.util.List;
 
 public class CommentMapper {
 
-    public static Comment fromNewCommentToComment(NewComment newComment, Long authorId, Long eventId) {
+    public static Comment fromNewCommentToComment(NewComment newComment, User author, Event event) {
         Comment comment = new Comment();
         comment.setText(newComment.getText());
-        comment.setAuthorId(authorId);
-        comment.setEventId(eventId);
+        comment.setAuthor(author);
+        comment.setEvent(event);
         comment.setPublishedOn(LocalDateTime.now());
         comment.setIsUpdated(false);
         return comment;
     }
 
-
     public static CommentShortDto toCommentShortDto(Comment comment) {
-        CommentShortDto dto = new CommentShortDto();
-        dto.setId(comment.getId());
-        dto.setEventId(comment.getEventId());
-        dto.setAuthorId(comment.getAuthorId()); // только id, без UserShortDto
-        dto.setText(comment.getText());
-        dto.setPublishedOn(comment.getPublishedOn());
-        dto.setIsUpdated(comment.getIsUpdated());
-        dto.setUpdatedOn(comment.getUpdatedOn());
-        return dto;
+        CommentShortDto commentShortDto = new CommentShortDto();
+        commentShortDto.setId(comment.getId());
+        commentShortDto.setEventId(comment.getEvent().getId());
+        commentShortDto.setAuthor(UserMapper.toUserShortDto(comment.getAuthor()));
+        commentShortDto.setText(comment.getText());
+        commentShortDto.setPublishedOn(comment.getPublishedOn());
+        commentShortDto.setIsUpdated(comment.getIsUpdated());
+        commentShortDto.setUpdatedOn(comment.getUpdatedOn());
+        return commentShortDto;
     }
-
 
     public static List<CommentShortDto> toCommentShortDto(Iterable<Comment> comments) {
         List<CommentShortDto> shortComments = new ArrayList<>();
@@ -42,5 +40,4 @@ public class CommentMapper {
         }
         return shortComments;
     }
-
 }

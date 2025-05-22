@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import ru.practicum.dto.EventFullDto;
 import ru.practicum.dto.EventShortDto;
 import ru.practicum.dto.EventSort;
-import ru.practicum.event.model.Event;
+import ru.practicum.model.Event;
 
 
 import java.time.LocalDateTime;

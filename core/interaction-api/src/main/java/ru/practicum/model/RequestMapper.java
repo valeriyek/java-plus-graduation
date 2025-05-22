@@ -1,4 +1,4 @@
-package ru.practicum.request.model;
+package ru.practicum.model;
 
 import ru.practicum.dto.ParticipationRequestDto;
 

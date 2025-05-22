@@ -6,16 +6,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ru.practicum.client.CategoryServiceClient;
+import ru.practicum.category.repository.CategoryRepository;
+
 import ru.practicum.client.RequestServiceClient;
 import ru.practicum.client.UserServiceClient;
 import ru.practicum.dto.*;
-import ru.practicum.event.model.Event;
+import ru.practicum.model.Category;
+import ru.practicum.model.Event;
 import ru.practicum.event.model.EventMapper;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
+import ru.practicum.model.User;
 
 
 import java.time.LocalDateTime;
@@ -29,82 +32,79 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final UserServiceClient userServiceClient;
-    private final CategoryServiceClient categoryServiceClient;
+    private final CategoryRepository categoryRepository;
     private final RequestServiceClient requestServiceClient;
+    private final EventMapper eventMapper;
 
     private static final long HOURS_BEFORE_EVENT = 2;
 
-    // Список событий пользователя
     public List<EventShortDto> getAllEventsOfUser(Long userId, int from, int size) {
-        getUserOrThrow(userId); // Проверка наличия пользователя
 
+        getUserOrThrow(userId);
         int page = from / size;
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Event> eventPage = eventRepository.findAllByInitiatorId(userId, pageRequest);
 
-        // Получаем инициатора и категорию для всех событий (оптимизация — пачка, если нужен реальный сервис)
+        Page<Event> eventPage = eventRepository.findAllByInitiator(userId, pageRequest);
+
         return eventPage.stream()
-                .map(event -> {
-                    UserShortDto initiator = getUserShortOrThrow(event.getInitiatorId());
-                    CategoryDto category = getCategoryDtoOrThrow(event.getCategoryId());
-                    return EventMapper.toEventShortDto(event, initiator, category);
-                })
+                .map(eventMapper::toEventShortDto)
                 .collect(Collectors.toList());
+
     }
 
     @Transactional
     public EventFullDto createEvent(Long userId, NewEventDto dto) {
-        UserShortDto initiator = getUserShortOrThrow(userId);
-        CategoryDto category = getCategoryDtoOrThrow(dto.getCategory());
+        User initiator = getUserOrThrow(userId);
+        Category category = getCategoryOrThrow(dto.getCategory());
 
         checkEventDate(dto.getEventDate());
-        Event event = EventMapper.toEvent(dto, userId, dto.getCategory()); // <-- метод перепиши для userId, categoryId
+        Event event = EventMapper.toEvent(dto, initiator, category);
         Event saved = eventRepository.save(event);
-        return EventMapper.toEventFullDto(saved, initiator, category);
+        return eventMapper.toEventFullDto(saved);
     }
 
     public EventFullDto getEventOfUser(Long userId, Long eventId) {
         getUserOrThrow(userId);
         Event event = getEventOrThrow(eventId);
-        if (!event.getInitiatorId().equals(userId)) {
+        if (!event.getInitiator().equals(userId)) {
             throw new NotFoundException("Событие не принадлежит пользователю id=" + userId);
         }
-        UserShortDto initiator = getUserShortOrThrow(event.getInitiatorId());
-        CategoryDto category = getCategoryDtoOrThrow(event.getCategoryId());
-        return EventMapper.toEventFullDto(event, initiator, category);
+        return eventMapper.toEventFullDto(event);
+
     }
 
     @Transactional
     public EventFullDto updateEventOfUser(Long userId, Long eventId, UpdateEventUserRequest dto) {
         getUserOrThrow(userId);
         Event event = getEventOrThrow(eventId);
-        if (!event.getInitiatorId().equals(userId)) {
+        if (!event.getInitiator().equals(userId)) {
             throw new NotFoundException("Событие не принадлежит пользователю id=" + userId);
         }
 
         if (EventState.PUBLISHED.equals(event.getState())) {
             throw new ConflictException("Нельзя изменять уже опубликованное событие");
+
         }
 
         if (dto.getEventDate() != null) {
             checkEventDate(dto.getEventDate());
         }
 
-        Long newCategoryId = dto.getCategory() != null ? dto.getCategory() : event.getCategoryId();
+
+        Category category = null;
+        if (dto.getCategory() != null) {
+            category = getCategoryOrThrow(dto.getCategory());
+        }
         if (dto.getStateAction() != null) {
             updateState(event, dto.getStateAction());
         }
-        EventMapper.updateEventFromUserRequest(event, dto, newCategoryId);
+        EventMapper.updateEventFromUserRequest(event, dto, category);
         Event updated = eventRepository.save(event);
 
-        UserShortDto initiator = getUserShortOrThrow(updated.getInitiatorId());
-        CategoryDto category = getCategoryDtoOrThrow(updated.getCategoryId());
-
-        return EventMapper.toEventFullDto(updated, initiator, category);
+        return eventMapper.toEventFullDto(updated);
     }
 
-    // ----------------- ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ----------------
-
+    // Вспомогательные методы
     private void updateState(Event event, String stateAction) {
         switch (stateAction) {
             case "CANCEL_REVIEW":
@@ -131,28 +131,13 @@ public class EventService {
                 .orElseThrow(() -> new NotFoundException("Событие с id=" + id + " не найдено"));
     }
 
-    private CategoryDto getCategoryDtoOrThrow(Long catId) {
-        return categoryServiceClient.getFullCategoriesById(catId)
+    private Category getCategoryOrThrow(Long catId) {
+        return categoryRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Категория с id=" + catId + " не найдена"));
     }
 
-    private UserShortDto getUserShortOrThrow(Long userId) {
-        UserDto userDto = userServiceClient.getUserById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + userId + " не найден"));
-        return toUserShortDto(userDto);
-    }
-    private UserShortDto toUserShortDto(UserDto userDto) {
-        UserShortDto dto = new UserShortDto();
-        dto.setId(userDto.getId());
-        dto.setName(userDto.getName());
-
-        return dto;
-    }
-
-
-    private void getUserOrThrow(Long userId) {
-
-        userServiceClient.getUserById(userId)
+    private User getUserOrThrow(Long userId) {
+        return userServiceClient.getUserById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id=" + userId + " не найден"));
     }
 
@@ -167,4 +152,5 @@ public class EventService {
     private Long getConfirmedRequests(Long eventId) {
         return requestServiceClient.getCountConfirmedRequestsByEventId(eventId);
     }
+
 }

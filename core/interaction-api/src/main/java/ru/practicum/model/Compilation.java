@@ -1,4 +1,4 @@
-package ru.practicum.compilation.model;
+package ru.practicum.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -22,9 +22,12 @@ public class Compilation {
     @Column(name = "pinned")
     private Boolean pinned;
 
-    @ElementCollection
-    @CollectionTable(name = "compilation_events", joinColumns = @JoinColumn(name = "compilation_id"))
-    @Column(name = "event_id")
-    private Set<Long> eventIds = new HashSet<>();
+    @ManyToMany
+    @JoinTable(
+            name = "compilation_events",
+            joinColumns = @JoinColumn(name = "compilation_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id")
+    )
+    private Set<Event> events;
 
 }

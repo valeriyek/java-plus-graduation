@@ -3,12 +3,12 @@ package ru.practicum.comment.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.client.UserServiceClient;
+
 import ru.practicum.dto.CommentShortDto;
 
 import ru.practicum.comment.repository.CommentRepository;
-import ru.practicum.comment.model.CommentMapper;
-import ru.practicum.comment.model.Comment;
+import ru.practicum.model.CommentMapper;
+import ru.practicum.model.Comment;
 
 import java.util.List;
 
@@ -17,7 +17,6 @@ import java.util.List;
 @Slf4j
 public class PublicCommentServiceImpl implements PublicCommentService {
     private final CommentRepository commentRepository;
-    private final UserServiceClient userClient;
 
     @Override
     public List<CommentShortDto> getAllByEventId(long eventId) {

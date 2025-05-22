@@ -3,8 +3,8 @@ package ru.practicum.client;
 import feign.FeignException;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.EventFullDto;
-import ru.practicum.dto.EventShortDto;
+
+import ru.practicum.model.Event;
 
 
 import java.util.Optional;
@@ -18,11 +18,11 @@ public interface EventServiceClient {
     boolean existsByCategoryId(@PathVariable Long id) throws FeignException;
 
     @GetMapping("/events/{id}/full")
-    Optional<EventFullDto> getEventFullById(@PathVariable long id) throws FeignException;
+    Optional<Event> getEventFullById(@PathVariable long id) throws FeignException;
 
     @PostMapping("/admin/events")
-    EventFullDto saveEvent(@RequestBody EventFullDto event) throws FeignException;
+    Event saveEvent(@RequestBody Event event) throws FeignException;
 
     @GetMapping("/admin/events/findbyidin")
-    Set<EventShortDto> findByIdIn(@RequestParam Set<Long> ids) throws FeignException;
+    Set<Event> findByIdIn(@RequestParam Set<Long> ids) throws FeignException;
 }

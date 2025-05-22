@@ -12,9 +12,11 @@ import ru.practicum.dto.EventFullDto;
 import ru.practicum.dto.EventShortDto;
 import ru.practicum.dto.EventSort;
 import ru.practicum.event.service.PublicEventService;
+import ru.practicum.model.Event;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/events")
@@ -24,11 +26,20 @@ import java.util.List;
 public class PublicEventController {
     private final PublicEventService publicEventService;
 
+
     @GetMapping("/{id}")
     public EventFullDto getEventById(@PathVariable long id, HttpServletRequest request) {
         log.info("Поступил запрос Get /events/{} на получение Event с id = {}", id, id);
         EventFullDto response = publicEventService.getEventById(id, request);
         log.info("Сформирован ответ Get /events/{} с телом: {}", id, response);
+        return response;
+    }
+
+    @GetMapping("/{id}/full")
+    public Optional<Event> getEventFullById(@PathVariable long id) {
+        log.info("Поступил запрос Get /events/{}/full на получение Event model с id = {}", id, id);
+        Optional<Event> response = publicEventService.getEventFullById(id);
+        log.info("Сформирован ответ Get /events/{}/full с телом: {}", id, response);
         return response;
     }
 
@@ -46,5 +57,6 @@ public class PublicEventController {
         log.info("Поступил запрос Get /events на получение Events с text = {}, size = {}", text, size);
         return publicEventService.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sorts, from, size, request);
     }
+
 
 }

@@ -1,48 +1,63 @@
 package ru.practicum.compilation.model;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import ru.practicum.client.UserServiceClient;
 import ru.practicum.dto.CompilationDto;
 import ru.practicum.dto.NewCompilationDto;
 import ru.practicum.dto.EventShortDto;
+import ru.practicum.event.model.EventMapper;
+import ru.practicum.model.Category;
+import ru.practicum.model.Compilation;
+import ru.practicum.model.Event;
+import ru.practicum.model.User;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Component
+@RequiredArgsConstructor
 public class CompilationMapper {
 
-    public static CompilationDto toCompilationDto(
-            Compilation compilation,
-            Map<Long, EventShortDto> eventShortDtoMap
-    ) {
-        CompilationDto dto = new CompilationDto();
-        dto.setId(compilation.getId());
-        dto.setPinned(compilation.getPinned());
-        dto.setTitle(compilation.getTitle());
+    private final UserServiceClient userServiceClient;
+    private final EventMapper eventMapper;
 
-        Set<EventShortDto> events = compilation.getEventIds().stream()
-                .map(eventShortDtoMap::get)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-
-        dto.setEvents(events);
-        return dto;
+    public CompilationDto toCompilationDto(Compilation compilation) {
+        CompilationDto compilationDto = new CompilationDto();
+        compilationDto.setId(compilation.getId());
+        compilationDto.setPinned(compilation.getPinned());
+        compilationDto.setTitle(compilation.getTitle());
+        compilationDto.setEvents(mapShortAndAddUsersAndCategories(compilation.getEvents()));
+        return compilationDto;
     }
 
-    public static List<CompilationDto> toCompilationDto(
-            Iterable<Compilation> compilations,
-            Map<Long, EventShortDto> eventShortDtoMap
-    ) {
+    public List<CompilationDto> toCompilationDto(Iterable<Compilation> compilations) {
         List<CompilationDto> result = new ArrayList<>();
         for (Compilation compilation : compilations) {
-            result.add(toCompilationDto(compilation, eventShortDtoMap));
+            result.add(toCompilationDto(compilation));
         }
         return result;
     }
 
-    public static Compilation toCompilation(NewCompilationDto newDto) {
+    public static Compilation toCompilation(NewCompilationDto newCompilationDto) {
         Compilation compilation = new Compilation();
-        compilation.setPinned(newDto.getPinned());
-        compilation.setTitle(newDto.getTitle());
-        // События добавляешь отдельно, если надо
+        compilation.setEvents(new HashSet<Event>());
+        compilation.setPinned(newCompilationDto.getPinned());
+        compilation.setTitle(newCompilationDto.getTitle());
         return compilation;
+    }
+
+    private Set<EventShortDto> mapShortAndAddUsersAndCategories(Set<Event> events) {
+        List<Long> userIds = events.stream().map(Event::getInitiator).toList();
+        Map<Long, User> users = loadUsers(userIds);
+        Map<Long, Category> categories = events.stream().collect(Collectors.toMap(Event::getId, Event::getCategory));
+        return events.stream()
+                .map(e -> eventMapper.toEventShortDto(e, users.get(e.getInitiator())))
+                .collect(Collectors.toSet());
+    }
+
+    private Map<Long, User> loadUsers(List<Long> ids) {
+        return userServiceClient.getUsersWithIds(ids).stream().collect(Collectors.toMap(User::getId, user -> user));
     }
 }

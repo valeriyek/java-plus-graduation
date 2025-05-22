@@ -1,4 +1,4 @@
-package ru.practicum.user.model;
+package ru.practicum.model;
 
 import ru.practicum.dto.NewUserRequest;
 import ru.practicum.dto.UserDto;

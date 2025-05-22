@@ -4,17 +4,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.compilation.repository.CompilationRepository;
-import ru.practicum.client.EventServiceClient;
+
 import ru.practicum.dto.CompilationDto;
-import ru.practicum.dto.EventShortDto;
+
 import ru.practicum.dto.NewCompilationDto;
 import ru.practicum.dto.UpdateCompilationRequest;
 import ru.practicum.compilation.model.CompilationMapper;
+import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.compilation.model.Compilation;
+import ru.practicum.model.Compilation;
+import ru.practicum.model.Event;
 
-import java.util.HashMap;
-import java.util.Map;
+
 import java.util.Set;
 
 @Service
@@ -23,24 +24,14 @@ import java.util.Set;
 public class AdminCompilationServiceImpl implements AdminCompilationService {
 
     private final CompilationRepository compilationRepository;
-    private final EventServiceClient eventServiceClient;
+    private final EventRepository eventRepository;
+    private final CompilationMapper compilationMapper;
 
     @Override
     @Transactional
     public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
         Compilation compilation = loadEventsIntoCompilation(newCompilationDto);
-        Compilation saved = compilationRepository.save(compilation);
-
-        // Используем batch-эндпоинт!
-        Set<Long> eventIds = saved.getEventIds();
-        Set<EventShortDto> eventShorts = eventServiceClient.findByIdIn(eventIds);
-
-        Map<Long, EventShortDto> eventShortDtoMap = new HashMap<>();
-        for (EventShortDto dto : eventShorts) {
-            eventShortDtoMap.put(dto.getId(), dto);
-        }
-
-        return CompilationMapper.toCompilationDto(saved, eventShortDtoMap);
+        return compilationMapper.toCompilationDto(compilationRepository.save(compilation));
     }
 
     @Override
@@ -56,17 +47,8 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         if (updateCompilationRequest.getEvents() != null && !updateCompilationRequest.getEvents().isEmpty()) {
             loadEventsIntoCompilation(compilation, updateCompilationRequest);
         }
-        Compilation saved = compilationRepository.save(compilation);
 
-        Set<Long> eventIds = saved.getEventIds();
-        Set<EventShortDto> eventShorts = eventServiceClient.findByIdIn(eventIds);
-
-        Map<Long, EventShortDto> eventShortDtoMap = new HashMap<>();
-        for (EventShortDto dto : eventShorts) {
-            eventShortDtoMap.put(dto.getId(), dto);
-        }
-
-        return CompilationMapper.toCompilationDto(saved, eventShortDtoMap);
+        return compilationMapper.toCompilationDto(compilationRepository.save(compilation));
     }
 
     @Override
@@ -78,14 +60,14 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
 
     private Compilation loadEventsIntoCompilation(NewCompilationDto newCompilationDto) {
         Compilation compilation = CompilationMapper.toCompilation(newCompilationDto);
-        Set<Long> eventIds = newCompilationDto.getEvents();
-        compilation.setEventIds(eventIds);
+        Set<Event> events = eventRepository.findByIdIn(newCompilationDto.getEvents());
+        compilation.setEvents(events);
         return compilation;
     }
 
     private Compilation loadEventsIntoCompilation(Compilation compilation, UpdateCompilationRequest updateCompilationRequest) {
-        Set<Long> eventIds = updateCompilationRequest.getEvents();
-        compilation.setEventIds(eventIds);
+        Set<Event> events = eventRepository.findByIdIn(updateCompilationRequest.getEvents());
+        compilation.setEvents(events);
         return compilation;
     }
 
@@ -93,4 +75,5 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         return compilationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Подборки событий с id = " + id + " не существует"));
     }
+
 }

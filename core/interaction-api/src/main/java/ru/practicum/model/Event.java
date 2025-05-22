@@ -1,4 +1,4 @@
-package ru.practicum.event.model;
+package ru.practicum.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -54,13 +54,15 @@ public class Event {
     private LocalDateTime publishedOn;
 
     @Column(name = "initiator_id", nullable = false)
-    private Long initiatorId;
+    private Long initiator;
 
 
 
 
-    @Column(name = "category_id", nullable = false)
-    private Long categoryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @Column(name = "views", nullable = false)
     private Long views = 0L;

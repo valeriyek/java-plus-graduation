@@ -7,11 +7,9 @@ import ru.practicum.client.EventServiceClient;
 import ru.practicum.dto.CategoryDto;
 import ru.practicum.dto.NewCategoryDto;
 import ru.practicum.category.repository.CategoryRepository;
-import ru.practicum.category.model.CategoryMapper;
+import ru.practicum.model.CategoryMapper;
 import ru.practicum.exception.ValidationException;
-import ru.practicum.category.model.Category;
-
-import java.util.Optional;
+import ru.practicum.model.Category;
 
 @Service
 @RequiredArgsConstructor
@@ -59,8 +57,5 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
             throw new ValidationException("Нельзя удалить категорию, с которой связаны события");
         }
     }
-    @Override
-    public Optional<Category> getFullCategoryById(long id) {
-        return categoryRepository.findById(id);
-    }
+
 }

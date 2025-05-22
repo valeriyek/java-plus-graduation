@@ -1,4 +1,4 @@
-package ru.practicum.request.model;
+package ru.practicum.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -28,7 +28,7 @@ public class ParticipationRequest {
 //    @JoinColumn(name = "event_id")
 //    private Event event;
     @Column(name = "event_id")
-    private Long eventId;
+    private Long event;
 
 
 //    @ManyToOne(fetch = FetchType.LAZY)
@@ -36,7 +36,7 @@ public class ParticipationRequest {
 //    @JoinColumn(name = "requester_id")
 //    private User requester;
 @Column(name = "requester_id")
-private Long requesterId;
+private Long requester;
 
     // Текущий статус заявки
     @Enumerated(EnumType.STRING)
