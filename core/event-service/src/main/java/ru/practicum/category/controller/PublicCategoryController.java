@@ -15,7 +15,6 @@ import java.util.List;
 public class PublicCategoryController {
     public final PublicCategoryService publicCategoryService;
 
-
     @GetMapping
     public List<CategoryDto> getAllCategories(@RequestParam(defaultValue = "0") int from, @RequestParam(defaultValue = "10") int size) {
         log.info("GET-запрос к эндпоинту: '/categories' на получение categories (from = {}, size = {}", from, size);

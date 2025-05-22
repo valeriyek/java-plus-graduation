@@ -11,5 +11,4 @@ public interface AdminCategoryService {
 
     void deleteCategoryById(Long id);
 
-
 }

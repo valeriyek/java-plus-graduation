@@ -3,10 +3,10 @@ package ru.practicum.category.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.client.EventServiceClient;
 import ru.practicum.dto.CategoryDto;
 import ru.practicum.dto.NewCategoryDto;
 import ru.practicum.category.repository.CategoryRepository;
+import ru.practicum.event.repository.EventRepository;
 import ru.practicum.model.CategoryMapper;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.model.Category;
@@ -17,7 +17,7 @@ import ru.practicum.model.Category;
 public class AdminCategoryServiceImpl implements AdminCategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final EventServiceClient eventServiceClient;
+    private final EventRepository eventRepository;
 
     @Override
     @Transactional
@@ -53,9 +53,8 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     }
 
     private void checkCategoryIsNotUse(Long id) {
-        if (eventServiceClient.existsByCategoryId(id)) {
+        if (eventRepository.existsByCategoryId(id)) {
             throw new ValidationException("Нельзя удалить категорию, с которой связаны события");
         }
     }
-
 }
