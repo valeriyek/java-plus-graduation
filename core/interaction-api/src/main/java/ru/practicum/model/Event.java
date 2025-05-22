@@ -10,6 +10,7 @@ import ru.practicum.dto.Location;
 
 import java.time.LocalDateTime;
 
+
 @Entity
 @Table(name = "events")
 @Data
@@ -55,8 +56,6 @@ public class Event {
 
     @Column(name = "initiator_id", nullable = false)
     private Long initiator;
-
-
 
 
     @ManyToOne(fetch = FetchType.LAZY)
