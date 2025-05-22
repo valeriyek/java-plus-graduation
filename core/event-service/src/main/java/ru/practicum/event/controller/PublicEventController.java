@@ -26,7 +26,6 @@ import java.util.Optional;
 public class PublicEventController {
     private final PublicEventService publicEventService;
 
-
     @GetMapping("/{id}")
     public EventFullDto getEventById(@PathVariable long id, HttpServletRequest request) {
         log.info("Поступил запрос Get /events/{} на получение Event с id = {}", id, id);
@@ -57,6 +56,5 @@ public class PublicEventController {
         log.info("Поступил запрос Get /events на получение Events с text = {}, size = {}", text, size);
         return publicEventService.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sorts, from, size, request);
     }
-
 
 }
