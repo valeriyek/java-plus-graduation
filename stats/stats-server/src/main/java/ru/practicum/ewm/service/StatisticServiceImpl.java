@@ -4,10 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.EndpointHitInputDto;
-import ru.practicum.ewm.exception.BadRequestException;
+
 import ru.practicum.ewm.repository.EndpointHitRepository;
 import ru.practicum.ViewStatsOutputDto;
 import ru.practicum.ewm.mapper.EndpointHitMapper;
+import ru.practicum.exception.BadRequestException;
 
 import java.time.LocalDateTime;
 import java.util.List;
