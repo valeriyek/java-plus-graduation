@@ -6,16 +6,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.client.EventServiceClient;
+import ru.practicum.client.UserServiceClient;
 import ru.practicum.client.UserServiceMainClient;
 import ru.practicum.dto.CommentShortDto;
 import ru.practicum.dto.NewComment;
 import ru.practicum.dto.UpdateCommentDto;
 
 import ru.practicum.comment.repository.CommentRepository;
+import ru.practicum.event.repository.EventRepository;
 import ru.practicum.model.CommentMapper;
 import ru.practicum.exception.ForbiddenException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.model.Comment;
+import ru.practicum.model.Event;
+import ru.practicum.model.User;
 
 
 import java.time.LocalDateTime;
@@ -27,24 +31,22 @@ import java.util.List;
 public class PrivateCommentServiceImpl implements PrivateCommentService {
 
     private final CommentRepository commentRepository;
-    private final EventServiceClient eventServiceClient;
-    private final UserServiceMainClient userServiceMainClient;
+    private final EventRepository eventRepository;
+    private final UserServiceClient userServiceClient;
 
     @Override
     @Transactional
     public CommentShortDto createComment(Long userId, Long eventId, NewComment newComment) {
-        checkUserExist(userId);
-        checkEventExist(eventId);
-        Comment comment = CommentMapper.fromNewCommentToComment(newComment, userId, eventId);
+        User user = checkUserExist(userId);
+        Event event = checkEventExist(eventId);
+        Comment comment = CommentMapper.fromNewCommentToComment(newComment, user, event);
         return CommentMapper.toCommentShortDto(commentRepository.save(comment));
     }
-
 
     @Override
     public List<CommentShortDto> getUserComments(Long userId, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
         return CommentMapper.toCommentShortDto(commentRepository.findByAuthorId(userId, pageable));
-
     }
 
     @Override
@@ -54,7 +56,8 @@ public class PrivateCommentServiceImpl implements PrivateCommentService {
         comment.setText(updateComment.getText());
         comment.setIsUpdated(true);
         comment.setUpdatedOn(LocalDateTime.now());
-        return CommentMapper.toCommentShortDto(commentRepository.save(comment));  }
+        return CommentMapper.toCommentShortDto(commentRepository.save(comment));
+    }
 
     @Override
     @Transactional
@@ -63,25 +66,23 @@ public class PrivateCommentServiceImpl implements PrivateCommentService {
         commentRepository.delete(comment);
     }
 
-    private void checkEventExist(Long id) {
-        if (eventServiceClient.getEventFullById(id).isEmpty()) {
-            throw new NotFoundException("События с id = " + id + " не существует");
-        }
-    }
-    private void checkUserExist(Long id) {
-        if (userServiceMainClient.getUserById(id).isEmpty()) {
-            throw new NotFoundException("Пользователя с id = " + id + " не существует");
-        }
+    private Event checkEventExist(Long id) {
+        return eventRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("События с id = " + id + " не существует"));
     }
 
+    private User checkUserExist(Long id) {
+        return userServiceClient.getUserById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователя с id = " + id + " не существует"));
+    }
 
     private Comment checkCommentExistAndAuthor(Long commentId, Long userId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new NotFoundException("Комментарий с id = " + commentId + " не найден"));
-        if (!comment.getAuthorId().equals(userId)) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new NotFoundException("Комментарий с id = " + commentId + " не найден"));
+
+        if (!comment.getAuthor().getId().equals(userId)) {
             throw new ForbiddenException("Пользователь не является автором комментария");
         }
         return comment;
     }
-
 }
