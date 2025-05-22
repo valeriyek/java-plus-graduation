@@ -5,9 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.client.EventServiceClient;
 import ru.practicum.client.UserServiceClient;
-import ru.practicum.client.UserServiceMainClient;
 import ru.practicum.dto.CommentShortDto;
 import ru.practicum.dto.NewComment;
 import ru.practicum.dto.UpdateCommentDto;
@@ -19,7 +17,7 @@ import ru.practicum.exception.ForbiddenException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.model.Comment;
 import ru.practicum.model.Event;
-import ru.practicum.model.User;
+import ru.practicum.user.model.User;
 
 
 import java.time.LocalDateTime;

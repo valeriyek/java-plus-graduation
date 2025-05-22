@@ -3,6 +3,7 @@ package ru.practicum.model;
 import ru.practicum.dto.NewUserRequest;
 import ru.practicum.dto.UserDto;
 import ru.practicum.dto.UserShortDto;
+import ru.practicum.user.model.User;
 
 
 import java.util.ArrayList;

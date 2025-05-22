@@ -11,7 +11,7 @@ import ru.practicum.event.model.EventMapper;
 import ru.practicum.model.Category;
 import ru.practicum.model.Compilation;
 import ru.practicum.model.Event;
-import ru.practicum.model.User;
+import ru.practicum.user.model.User;
 
 import java.util.*;
 import java.util.stream.Collectors;

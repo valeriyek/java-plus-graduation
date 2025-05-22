@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ru.practicum.client.UserServiceMainClient;
-import ru.practicum.model.User;
+import ru.practicum.user.model.User;
 import ru.practicum.user.service.AdminUserService;
 
 import java.util.List;

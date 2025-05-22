@@ -7,6 +7,7 @@ import ru.practicum.client.UserServiceClient;
 import ru.practicum.dto.*;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.model.*;
+import ru.practicum.user.model.User;
 
 
 import java.time.LocalDateTime;

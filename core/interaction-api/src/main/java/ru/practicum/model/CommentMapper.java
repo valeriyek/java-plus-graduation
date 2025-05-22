@@ -3,6 +3,7 @@ package ru.practicum.model;
 
 import ru.practicum.dto.CommentShortDto;
 import ru.practicum.dto.NewComment;
+import ru.practicum.user.model.User;
 
 
 import java.time.LocalDateTime;

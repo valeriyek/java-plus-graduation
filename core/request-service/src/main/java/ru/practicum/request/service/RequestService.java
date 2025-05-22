@@ -16,7 +16,7 @@ import ru.practicum.exception.ValidationException;
 
 import ru.practicum.model.ParticipationRequest;
 
-import ru.practicum.model.User;
+import ru.practicum.user.model.User;
 import ru.practicum.request.repository.RequestRepository;
 
 import java.time.LocalDateTime;

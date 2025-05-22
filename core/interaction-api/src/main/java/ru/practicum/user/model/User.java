@@ -1,10 +1,10 @@
-package ru.practicum.model;
+package ru.practicum.user.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "users", schema = "public")
+@Table(name = "users")
 @Data
 public class User {
 
