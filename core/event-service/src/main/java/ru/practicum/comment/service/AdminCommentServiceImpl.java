@@ -20,7 +20,6 @@ public class AdminCommentServiceImpl implements AdminCommentService {
 
     private final CommentRepository commentRepository;
 
-
     @Override
     public List<CommentShortDto> getCommentsByParams(List<Long> userIds, List<Long> eventIds, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from, size);
@@ -32,4 +31,5 @@ public class AdminCommentServiceImpl implements AdminCommentService {
     public void deleteCommentById(Long id) {
         commentRepository.deleteById(id);
     }
+
 }

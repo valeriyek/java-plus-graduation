@@ -4,12 +4,11 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Data
-@Table(name = "compilations", schema = "public")
+@Table(name = "compilations")
 public class Compilation {
 
     @Id

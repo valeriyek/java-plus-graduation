@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ru.practicum.category.repository.CategoryRepository;
 
-import ru.practicum.client.RequestServiceClient;
-import ru.practicum.client.UserServiceClient;
+import ru.practicum.feign.RequestServiceClient;
+import ru.practicum.feign.UserServiceClient;
 import ru.practicum.dto.*;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;

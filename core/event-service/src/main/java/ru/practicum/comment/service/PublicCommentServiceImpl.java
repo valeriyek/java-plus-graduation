@@ -19,14 +19,14 @@ public class PublicCommentServiceImpl implements PublicCommentService {
     private final CommentRepository commentRepository;
 
     @Override
-    public List<CommentShortDto> getAllByEventId(long eventId) {
-        List<Comment> comments = commentRepository.findAllByEventId(eventId);
+    public List<CommentShortDto> getAllByEventId(long id) {
+        List<Comment> comments = commentRepository.findAllByEventId(id);
 
         List<CommentShortDto> commentsDto = comments.stream()
                 .map(CommentMapper::toCommentShortDto)
                 .toList();
 
-        log.info("получен список commentsDto для event с id = " + eventId);
+        log.info("получен список commentsDto для event с id = " + id);
         return commentsDto;
     }
 }

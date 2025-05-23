@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ru.practicum.client.RequestServiceClient;
+import ru.practicum.feign.RequestServiceClient;
 import ru.practicum.dto.*;
 
 import ru.practicum.event.service.EventService;

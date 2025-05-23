@@ -3,7 +3,7 @@ package ru.practicum.event.model;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import ru.practicum.client.UserServiceClient;
+import ru.practicum.feign.UserServiceClient;
 import ru.practicum.dto.*;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.model.*;

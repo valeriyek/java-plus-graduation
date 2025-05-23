@@ -3,7 +3,7 @@ package ru.practicum.compilation.model;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import ru.practicum.client.UserServiceClient;
+import ru.practicum.feign.UserServiceClient;
 import ru.practicum.dto.CompilationDto;
 import ru.practicum.dto.NewCompilationDto;
 import ru.practicum.dto.EventShortDto;
