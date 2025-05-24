@@ -3,7 +3,7 @@ package ru.practicum.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import ru.practicum.user.model.User;
 
 
@@ -11,7 +11,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "event_comments")
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Comment {
 
     @Id

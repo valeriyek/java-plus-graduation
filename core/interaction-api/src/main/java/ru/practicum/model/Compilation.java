@@ -1,13 +1,16 @@
 package ru.practicum.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "compilations")
 public class Compilation {
 

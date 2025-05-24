@@ -42,7 +42,7 @@ public class CompilationMapper {
 
     public static Compilation toCompilation(NewCompilationDto newCompilationDto) {
         Compilation compilation = new Compilation();
-        compilation.setEvents(new HashSet<Event>());
+        compilation.setEvents(new HashSet<>());
         compilation.setPinned(newCompilationDto.getPinned());
         compilation.setTitle(newCompilationDto.getTitle());
         return compilation;
@@ -51,7 +51,6 @@ public class CompilationMapper {
     private Set<EventShortDto> mapShortAndAddUsersAndCategories(Set<Event> events) {
         List<Long> userIds = events.stream().map(Event::getInitiator).toList();
         Map<Long, User> users = loadUsers(userIds);
-        Map<Long, Category> categories = events.stream().collect(Collectors.toMap(Event::getId, Event::getCategory));
         return events.stream()
                 .map(e -> eventMapper.toEventShortDto(e, users.get(e.getInitiator())))
                 .collect(Collectors.toSet());

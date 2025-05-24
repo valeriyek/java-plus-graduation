@@ -2,7 +2,7 @@ package ru.practicum.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import ru.practicum.dto.RequestStatus;
 
 
@@ -11,7 +11,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "requests")
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ParticipationRequest {
 
     @Id
@@ -23,20 +26,12 @@ public class ParticipationRequest {
     private LocalDateTime created;
 
     // Событие
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-//    @JoinColumn(name = "event_id")
-//    private Event event;
     @Column(name = "event_id")
     private Long event;
 
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-//    @JoinColumn(name = "requester_id")
-//    private User requester;
-@Column(name = "requester_id")
-private Long requester;
+    // Пользователь, отправивший заявку
+    @Column(name = "requester_id")
+    private Long requester;
 
     // Текущий статус заявки
     @Enumerated(EnumType.STRING)

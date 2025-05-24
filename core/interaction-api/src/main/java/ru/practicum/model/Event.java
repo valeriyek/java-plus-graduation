@@ -3,7 +3,7 @@ package ru.practicum.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import ru.practicum.dto.EventState;
 import ru.practicum.dto.Location;
 
@@ -13,7 +13,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "events")
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Event {
 
     @Id
