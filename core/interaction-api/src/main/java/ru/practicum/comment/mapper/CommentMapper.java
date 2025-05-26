@@ -1,8 +1,11 @@
-package ru.practicum.model;
+package ru.practicum.comment.mapper;
 
 
+import ru.practicum.comment.model.Comment;
 import ru.practicum.dto.CommentShortDto;
 import ru.practicum.dto.NewComment;
+import ru.practicum.event.model.Event;
+import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.model.User;
 
 

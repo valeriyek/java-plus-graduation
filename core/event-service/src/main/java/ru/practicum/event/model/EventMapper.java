@@ -3,10 +3,12 @@ package ru.practicum.event.model;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import ru.practicum.category.mapper.CategoryMapper;
+import ru.practicum.category.model.Category;
 import ru.practicum.feign.UserServiceClient;
 import ru.practicum.dto.*;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.model.*;
+import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.model.User;
 
 

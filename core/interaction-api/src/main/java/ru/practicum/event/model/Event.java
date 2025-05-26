@@ -1,9 +1,10 @@
-package ru.practicum.model;
+package ru.practicum.event.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+import ru.practicum.category.model.Category;
 import ru.practicum.dto.EventState;
 import ru.practicum.dto.Location;
 

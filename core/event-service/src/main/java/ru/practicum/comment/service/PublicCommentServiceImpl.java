@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import ru.practicum.dto.CommentShortDto;
 
 import ru.practicum.comment.repository.CommentRepository;
-import ru.practicum.model.CommentMapper;
-import ru.practicum.model.Comment;
+import ru.practicum.comment.mapper.CommentMapper;
+import ru.practicum.comment.model.Comment;
 
 import java.util.List;
 

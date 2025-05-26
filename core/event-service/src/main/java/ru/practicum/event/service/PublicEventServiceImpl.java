@@ -15,7 +15,7 @@ import ru.practicum.EndpointHitInputDto;
 import ru.practicum.StatFeignClient;
 import ru.practicum.ViewStatsOutputDto;
 import ru.practicum.dto.*;
-import ru.practicum.model.Event;
+import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventMapper;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.BadRequestException;

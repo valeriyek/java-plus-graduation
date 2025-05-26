@@ -12,7 +12,7 @@ import ru.practicum.dto.EventFullDto;
 import ru.practicum.dto.EventShortDto;
 import ru.practicum.dto.EventSort;
 import ru.practicum.event.service.PublicEventService;
-import ru.practicum.model.Event;
+import ru.practicum.event.model.Event;
 
 import java.time.LocalDateTime;
 import java.util.List;

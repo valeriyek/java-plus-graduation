@@ -4,7 +4,7 @@ import feign.FeignException;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-import ru.practicum.model.Event;
+import ru.practicum.event.model.Event;
 
 
 import java.util.Optional;

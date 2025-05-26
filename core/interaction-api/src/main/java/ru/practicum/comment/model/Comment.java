@@ -1,9 +1,10 @@
-package ru.practicum.model;
+package ru.practicum.comment.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+import ru.practicum.event.model.Event;
 import ru.practicum.user.model.User;
 
 

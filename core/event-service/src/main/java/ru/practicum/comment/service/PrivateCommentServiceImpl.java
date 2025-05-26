@@ -12,11 +12,11 @@ import ru.practicum.dto.UpdateCommentDto;
 
 import ru.practicum.comment.repository.CommentRepository;
 import ru.practicum.event.repository.EventRepository;
-import ru.practicum.model.CommentMapper;
+import ru.practicum.comment.mapper.CommentMapper;
 import ru.practicum.exception.ForbiddenException;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.model.Comment;
-import ru.practicum.model.Event;
+import ru.practicum.comment.model.Comment;
+import ru.practicum.event.model.Event;
 import ru.practicum.user.model.User;
 
 

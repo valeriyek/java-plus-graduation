@@ -12,8 +12,8 @@ import ru.practicum.dto.UpdateCompilationRequest;
 import ru.practicum.compilation.model.CompilationMapper;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.model.Compilation;
-import ru.practicum.model.Event;
+import ru.practicum.compilation.model.Compilation;
+import ru.practicum.event.model.Event;
 
 
 import java.util.Set;

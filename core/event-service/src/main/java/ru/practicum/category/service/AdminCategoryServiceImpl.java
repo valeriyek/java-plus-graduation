@@ -7,9 +7,9 @@ import ru.practicum.dto.CategoryDto;
 import ru.practicum.dto.NewCategoryDto;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.repository.EventRepository;
-import ru.practicum.model.CategoryMapper;
+import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.exception.ValidationException;
-import ru.practicum.model.Category;
+import ru.practicum.category.model.Category;
 
 @Service
 @RequiredArgsConstructor

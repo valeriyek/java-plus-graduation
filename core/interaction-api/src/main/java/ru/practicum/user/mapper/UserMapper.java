@@ -1,4 +1,4 @@
-package ru.practicum.model;
+package ru.practicum.user.mapper;
 
 import ru.practicum.dto.NewUserRequest;
 import ru.practicum.dto.UserDto;

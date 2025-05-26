@@ -8,9 +8,7 @@ import ru.practicum.dto.CompilationDto;
 import ru.practicum.dto.NewCompilationDto;
 import ru.practicum.dto.EventShortDto;
 import ru.practicum.event.model.EventMapper;
-import ru.practicum.model.Category;
-import ru.practicum.model.Compilation;
-import ru.practicum.model.Event;
+import ru.practicum.event.model.Event;
 import ru.practicum.user.model.User;
 
 import java.util.*;

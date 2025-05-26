@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.dto.EventState;
-import ru.practicum.model.Event;
+import ru.practicum.event.model.Event;
 
 import java.time.LocalDateTime;
 import java.util.List;

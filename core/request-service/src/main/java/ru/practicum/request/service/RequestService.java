@@ -9,13 +9,13 @@ import ru.practicum.feign.EventServiceClient;
 import ru.practicum.client.UserServiceClient;
 
 import ru.practicum.dto.*;
-import ru.practicum.model.Event;
-import ru.practicum.model.RequestMapper;
+import ru.practicum.event.model.Event;
+import ru.practicum.request.mapper.RequestMapper;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ParticipantLimitReachedException;
 import ru.practicum.exception.ValidationException;
 
-import ru.practicum.model.ParticipationRequest;
+import ru.practicum.request.model.ParticipationRequest;
 
 import ru.practicum.user.model.User;
 import ru.practicum.request.repository.RequestRepository;

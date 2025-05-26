@@ -1,6 +1,7 @@
-package ru.practicum.model;
+package ru.practicum.category.mapper;
 
 
+import ru.practicum.category.model.Category;
 import ru.practicum.dto.CategoryDto;
 import ru.practicum.dto.NewCategoryDto;
 
