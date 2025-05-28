@@ -6,7 +6,6 @@ import ru.practicum.dto.CompilationDto;
 import ru.practicum.dto.EventShortDto;
 import ru.practicum.dto.NewCompilationDto;
 import ru.practicum.dto.UserShortDto;
-import ru.practicum.event.model.EventMapper;
 import ru.practicum.feign.EventServiceClient;
 import ru.practicum.feign.UserServiceClient;
 
@@ -19,7 +18,7 @@ public class CompilationMapper {
 
     private final UserServiceClient userServiceClient;
     private final EventServiceClient eventServiceClient;
-    private final EventMapper eventMapper;
+
 
     public CompilationDto toCompilationDto(Compilation compilation) {
         CompilationDto dto = new CompilationDto();

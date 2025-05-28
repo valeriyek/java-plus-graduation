@@ -1,9 +1,12 @@
 package ru.practicum.category.model;
 
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.practicum.dto.CategoryDto;
 import ru.practicum.dto.NewCategoryDto;
-
+@Component
+@RequiredArgsConstructor
 public class CategoryMapper {
     public static Category mapToCategory(NewCategoryDto newCategoryDto) {
         Category category = new Category();

@@ -1,5 +1,7 @@
 package ru.practicum.comment.model;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.practicum.dto.CommentShortDto;
 import ru.practicum.dto.NewComment;
 import ru.practicum.dto.UserShortDto;
@@ -8,6 +10,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
+@RequiredArgsConstructor
 public class CommentMapper {
 
     public static Comment fromNewCommentToComment(NewComment newComment, Long authorId, Long eventId) {
