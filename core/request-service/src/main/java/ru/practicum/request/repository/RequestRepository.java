@@ -27,6 +27,5 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest, L
 
     Optional<ParticipationRequest> findByIdAndRequester(Long requestId, Long requesterId);
 
-    @Query("SELECT e.views FROM Event e WHERE e.id = :eventId")
-    Long getViewsForEvent(@Param("eventId") Long eventId);
+
 }
