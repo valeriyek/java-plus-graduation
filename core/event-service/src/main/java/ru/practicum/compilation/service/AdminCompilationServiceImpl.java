@@ -15,7 +15,7 @@ import ru.practicum.exception.NotFoundException;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.event.model.Event;
 
-
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -24,13 +24,15 @@ import java.util.Set;
 public class AdminCompilationServiceImpl implements AdminCompilationService {
 
     private final CompilationRepository compilationRepository;
-    private final EventRepository eventRepository;
     private final CompilationMapper compilationMapper;
 
     @Override
     @Transactional
     public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
-        Compilation compilation = loadEventsIntoCompilation(newCompilationDto);
+        Compilation compilation = CompilationMapper.toCompilation(newCompilationDto);
+        compilation.setEventIds(
+                newCompilationDto.getEvents() == null ? Set.of() : new HashSet<>(newCompilationDto.getEvents())
+        );
         return compilationMapper.toCompilationDto(compilationRepository.save(compilation));
     }
 
@@ -38,14 +40,17 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     @Transactional
     public CompilationDto updateCompilation(UpdateCompilationRequest updateCompilationRequest, Long id) {
         Compilation compilation = checkExistCompilationById(id);
+
         if (updateCompilationRequest.getTitle() != null && !updateCompilationRequest.getTitle().isBlank()) {
             compilation.setTitle(updateCompilationRequest.getTitle());
         }
+
         if (updateCompilationRequest.getPinned() != null) {
             compilation.setPinned(updateCompilationRequest.getPinned());
         }
+
         if (updateCompilationRequest.getEvents() != null && !updateCompilationRequest.getEvents().isEmpty()) {
-            loadEventsIntoCompilation(compilation, updateCompilationRequest);
+            compilation.setEventIds(new HashSet<>(updateCompilationRequest.getEvents()));
         }
 
         return compilationMapper.toCompilationDto(compilationRepository.save(compilation));
@@ -58,22 +63,8 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         compilationRepository.deleteById(id);
     }
 
-    private Compilation loadEventsIntoCompilation(NewCompilationDto newCompilationDto) {
-        Compilation compilation = CompilationMapper.toCompilation(newCompilationDto);
-        Set<Event> events = eventRepository.findByIdIn(newCompilationDto.getEvents());
-        compilation.setEvents(events);
-        return compilation;
-    }
-
-    private Compilation loadEventsIntoCompilation(Compilation compilation, UpdateCompilationRequest updateCompilationRequest) {
-        Set<Event> events = eventRepository.findByIdIn(updateCompilationRequest.getEvents());
-        compilation.setEvents(events);
-        return compilation;
-    }
-
     private Compilation checkExistCompilationById(Long id) {
         return compilationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Подборки событий с id = " + id + " не существует"));
     }
-
 }

@@ -6,8 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import ru.practicum.user.model.User;
-
+import ru.practicum.dto.UserShortDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,9 +14,15 @@ import java.util.Optional;
 
 public interface UserServiceMainClient {
 
-    @GetMapping("/{id}")
-    Optional<User> getUserById(@PathVariable Long id) throws FeignException;
+//    @GetMapping("/{id}")
+//    Optional<User> getUserById(@PathVariable Long id) throws FeignException;
+//
+//    @GetMapping("/list")
+//    List<User> getUsersWithIds(@RequestParam List<Long> ids) throws FeignException;
+@GetMapping("/{id}")
+Optional<UserShortDto> getUserById(@PathVariable Long id) throws FeignException;
 
     @GetMapping("/list")
-    List<User> getUsersWithIds(@RequestParam List<Long> ids) throws FeignException;
+    List<UserShortDto> getUsersWithIds(@RequestParam("ids") List<Long> ids) throws FeignException;
+
 }

@@ -26,7 +26,7 @@ public class AdminEventServiceImpl implements AdminEventService {
     private static final Integer HOURS_BEFORE_EVENT_START = 1;
 
     private final EventRepository eventRepository;
-    private final CategoryRepository categoryRepository;
+
     private final EventMapper eventMapper;
 
     @Override
@@ -48,9 +48,10 @@ public class AdminEventServiceImpl implements AdminEventService {
             existEvent.setAnnotation(updateEventAdminRequest.getAnnotation());
         }
         if (updateEventAdminRequest.getCategory() != null) {
-            existEvent.setCategory(categoryRepository.findById(updateEventAdminRequest.getCategory())
-                    .orElseThrow(() -> new NotFoundException("Категории c id = " + updateEventAdminRequest.getCategory() + " не существует")));
+            existEvent.setCategoryId(updateEventAdminRequest.getCategory());
         }
+
+
         if (updateEventAdminRequest.getDescription() != null) {
             existEvent.setDescription(updateEventAdminRequest.getDescription());
         }

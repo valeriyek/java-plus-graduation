@@ -62,10 +62,9 @@ public class Event {
     private Long initiator;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @Column(name = "category_id", nullable = false)
+    private Long categoryId;
+
 
     @Column(name = "views", nullable = false)
     private Long views = 0L;

@@ -18,7 +18,7 @@ import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
-import ru.practicum.user.model.User;
+
 
 
 import java.time.LocalDateTime;
@@ -54,14 +54,18 @@ public class EventService {
 
     @Transactional
     public EventFullDto createEvent(Long userId, NewEventDto dto) {
-        User initiator = getUserOrThrow(userId);
-        Category category = getCategoryOrThrow(dto.getCategory());
 
+        getUserOrThrow(userId);
+
+        Category category = getCategoryOrThrow(dto.getCategory());
         checkEventDate(dto.getEventDate());
-        Event event = EventMapper.toEvent(dto, initiator, category);
+
+
+        Event event = EventMapper.toEvent(dto);
         Event saved = eventRepository.save(event);
         return eventMapper.toEventFullDto(saved);
     }
+
 
     public EventFullDto getEventOfUser(Long userId, Long eventId) {
         getUserOrThrow(userId);
@@ -98,7 +102,7 @@ public class EventService {
         if (dto.getStateAction() != null) {
             updateState(event, dto.getStateAction());
         }
-        EventMapper.updateEventFromUserRequest(event, dto, category);
+        EventMapper.updateEventFromUserRequest(event, dto);
         Event updated = eventRepository.save(event);
 
         return eventMapper.toEventFullDto(updated);
@@ -136,10 +140,11 @@ public class EventService {
                 .orElseThrow(() -> new NotFoundException("Категория с id=" + catId + " не найдена"));
     }
 
-    private User getUserOrThrow(Long userId) {
+    private UserShortDto getUserOrThrow(Long userId) {
         return userServiceClient.getUserById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id=" + userId + " не найден"));
     }
+
 
     private void checkEventDate(LocalDateTime eventDate) {
         if (eventDate.isBefore(LocalDateTime.now().plusHours(HOURS_BEFORE_EVENT))) {

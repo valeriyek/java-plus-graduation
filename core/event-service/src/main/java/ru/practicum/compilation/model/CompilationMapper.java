@@ -2,14 +2,13 @@ package ru.practicum.compilation.model;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import ru.practicum.feign.UserServiceClient;
 import ru.practicum.dto.CompilationDto;
-import ru.practicum.dto.NewCompilationDto;
 import ru.practicum.dto.EventShortDto;
+import ru.practicum.dto.NewCompilationDto;
+import ru.practicum.dto.UserShortDto;
 import ru.practicum.event.model.EventMapper;
-import ru.practicum.event.model.Event;
-import ru.practicum.user.model.User;
+import ru.practicum.feign.EventServiceClient;
+import ru.practicum.feign.UserServiceClient;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,15 +18,16 @@ import java.util.stream.Collectors;
 public class CompilationMapper {
 
     private final UserServiceClient userServiceClient;
+    private final EventServiceClient eventServiceClient;
     private final EventMapper eventMapper;
 
     public CompilationDto toCompilationDto(Compilation compilation) {
-        CompilationDto compilationDto = new CompilationDto();
-        compilationDto.setId(compilation.getId());
-        compilationDto.setPinned(compilation.getPinned());
-        compilationDto.setTitle(compilation.getTitle());
-        compilationDto.setEvents(mapShortAndAddUsersAndCategories(compilation.getEvents()));
-        return compilationDto;
+        CompilationDto dto = new CompilationDto();
+        dto.setId(compilation.getId());
+        dto.setTitle(compilation.getTitle());
+        dto.setPinned(compilation.getPinned());
+        dto.setEvents(mapShortAndAddUsers(compilation.getEventIds()));
+        return dto;
     }
 
     public List<CompilationDto> toCompilationDto(Iterable<Compilation> compilations) {
@@ -38,23 +38,46 @@ public class CompilationMapper {
         return result;
     }
 
-    public static Compilation toCompilation(NewCompilationDto newCompilationDto) {
+    public static Compilation toCompilation(NewCompilationDto newDto) {
         Compilation compilation = new Compilation();
-        compilation.setEvents(new HashSet<>());
-        compilation.setPinned(newCompilationDto.getPinned());
-        compilation.setTitle(newCompilationDto.getTitle());
+        compilation.setTitle(newDto.getTitle());
+        compilation.setPinned(newDto.getPinned());
+        compilation.setEventIds(newDto.getEvents() != null ? new HashSet<>(newDto.getEvents()) : new HashSet<>());
         return compilation;
     }
 
-    private Set<EventShortDto> mapShortAndAddUsersAndCategories(Set<Event> events) {
-        List<Long> userIds = events.stream().map(Event::getInitiator).toList();
-        Map<Long, User> users = loadUsers(userIds);
-        return events.stream()
-                .map(e -> eventMapper.toEventShortDto(e, users.get(e.getInitiator())))
-                .collect(Collectors.toSet());
-    }
+    private Set<EventShortDto> mapShortAndAddUsers(Set<Long> eventIds) {
+        if (eventIds == null || eventIds.isEmpty()) return Collections.emptySet();
 
-    private Map<Long, User> loadUsers(List<Long> ids) {
-        return userServiceClient.getUsersWithIds(ids).stream().collect(Collectors.toMap(User::getId, user -> user));
+        Set<EventShortDto> eventShortDtos = eventServiceClient.findByIdIn(eventIds);
+        List<Long> userIds = eventShortDtos.stream()
+                .map(EventShortDto::getInitiator)
+                .filter(Objects::nonNull)
+                .map(UserShortDto::getId) // <-- вот тут ключевой момент
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+
+
+        Map<Long, UserShortDto> usersById = userServiceClient.getUsersWithIds(userIds).stream()
+                .collect(Collectors.toMap(UserShortDto::getId, u -> u));
+
+        return eventShortDtos.stream()
+                .map(event -> {
+                    UserShortDto user = usersById.get(event.getInitiator().getId());
+                    EventShortDto dto = new EventShortDto();
+                    dto.setId(event.getId());
+                    dto.setAnnotation(event.getAnnotation());
+                    dto.setEventDate(event.getEventDate());
+                    dto.setPaid(event.isPaid());
+                    dto.setTitle(event.getTitle());
+                    dto.setConfirmedRequests(event.getConfirmedRequests());
+                    dto.setViews(event.getViews());
+                    dto.setInitiator(user);
+                    dto.setCategory(event.getCategory());
+                    return dto;
+                })
+
+                .collect(Collectors.toSet());
     }
 }

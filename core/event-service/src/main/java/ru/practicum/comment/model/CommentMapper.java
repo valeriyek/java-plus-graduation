@@ -1,4 +1,5 @@
-import ru.practicum.comment.model.Comment;
+package ru.practicum.comment.model;
+
 import ru.practicum.dto.CommentShortDto;
 import ru.practicum.dto.NewComment;
 import ru.practicum.dto.UserShortDto;
@@ -42,4 +43,13 @@ public class CommentMapper {
         }
         return shortComments;
     }
+    public static List<CommentShortDto> toCommentShortDto(List<Comment> comments, UserShortDto author) {
+        List<CommentShortDto> result = new ArrayList<>();
+        for (Comment comment : comments) {
+            result.add(toCommentShortDto(comment, author));
+        }
+        return result;
+    }
+
+
 }

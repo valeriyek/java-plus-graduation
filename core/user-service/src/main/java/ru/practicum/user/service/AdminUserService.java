@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ru.practicum.user.mapper.UserMapper;
+import ru.practicum.user.model.UserMapper;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.dto.NewUserRequest;
 import ru.practicum.dto.UserDto;
