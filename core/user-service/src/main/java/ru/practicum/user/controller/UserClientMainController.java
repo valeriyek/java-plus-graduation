@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ru.practicum.dto.UserShortDto;
 import ru.practicum.feign.UserServiceMainClient;
-import ru.practicum.user.model.UserMapper;
+
 import ru.practicum.user.model.User;
+import ru.practicum.user.model.UserMapper;
 import ru.practicum.user.service.AdminUserService;
 
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/user")
 public class UserClientMainController implements UserServiceMainClient {
     private final AdminUserService adminUserService;
-    private final UserMapper userMapper;
+
 
     @Override
     public Optional<UserShortDto> getUserById(Long id) throws FeignException {
