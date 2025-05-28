@@ -14,7 +14,6 @@ import java.util.Set;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-
     Set<Event> findByIdIn(Set<Long> ids);
 
     Page<Event> findAllByInitiator(Long userId, Pageable pageable);
@@ -25,7 +24,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             select e from Event e
             where (coalesce(:userIds, null) is null or e.initiator in :userIds)
             and (coalesce(:states, null) is null or e.state in :states)
-            and (coalesce(:categoryIds, null) is null or e.category.id in :categoryIds)
+            and (coalesce(:categoryIds, null) is null or e.categoryId in :categoryIds)
             and (coalesce(:rangeStart, null) is null or e.eventDate >= :rangeStart)
             and (coalesce(:rangeEnd, null) is null or e.eventDate <= :rangeEnd)
             order by e.id desc
@@ -41,7 +40,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("SELECT e FROM Event e "
             + "WHERE (LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%')) "
             + "   OR LOWER(e.description) LIKE LOWER(CONCAT('%', :text, '%'))) "
-            + "AND (:categories IS NULL OR e.category.id IN :categories) "
+            + "AND (:categories IS NULL OR e.categoryId IN :categories) "
             + "AND (:paid IS NULL OR e.paid = :paid) "
             + "AND (e.eventDate >= :rangeStart AND e.eventDate <= :rangeEnd) "
             + "AND e.state = 'PUBLISHED' "
@@ -56,7 +55,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("SELECT e FROM Event e " +
             "WHERE (COALESCE(:text, '') = '' OR LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%')) OR LOWER(e.description) LIKE LOWER(CONCAT('%', :text, '%'))) "
-            + "AND (:categories IS NULL OR e.category.id IN :categories) "
+            + "AND (:categories IS NULL OR e.categoryId IN :categories) "
             + "AND (:paid IS NULL OR e.paid = :paid) "
             + "AND e.eventDate BETWEEN :rangeStart AND :rangeEnd "
             + "AND e.state = 'PUBLISHED' ")
