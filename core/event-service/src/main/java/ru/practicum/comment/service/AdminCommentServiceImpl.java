@@ -26,7 +26,7 @@ public class AdminCommentServiceImpl implements AdminCommentService {
     @Override
     public List<CommentShortDto> getCommentsByParams(List<Long> userIds, List<Long> eventIds, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
-        List<Comment> comments = commentRepository.findByUserIdInAndEventIdIn(userIds, eventIds, pageable);
+        List<Comment> comments = commentRepository.findByAuthorIdInAndEventIdIn(userIds, eventIds, pageable);
 
         List<Long> authorIds = comments.stream()
                 .map(Comment::getAuthorId)
