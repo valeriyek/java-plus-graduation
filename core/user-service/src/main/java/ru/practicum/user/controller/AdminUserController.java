@@ -1,62 +1,60 @@
 package ru.practicum.user.controller;
 
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import ru.practicum.dto.NewUserRequest;
 import ru.practicum.dto.UserDto;
-import ru.practicum.user.model.User;
-import ru.practicum.user.service.AdminUserService;
-import ru.practicum.validation.CreateGroup;
-
+import ru.practicum.dto.UserShortDto;
+import ru.practicum.user.service.UserService;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @RestController
+@RequestMapping(path = "/admin/users")
 @RequiredArgsConstructor
-@RequestMapping("/admin/users")
 @Validated
 public class AdminUserController {
 
-    private final AdminUserService adminUserService;
+    private final UserService userService;
 
     @GetMapping
-    public List<UserDto> getUsersByParams(@RequestParam(required = false) List<Long> ids,
-                                          @RequestParam(required = false, defaultValue = "0") Integer from,
-                                          @RequestParam(required = false, defaultValue = "10") Integer size) {
-        log.info("Поступил запрос Get /admin/users на получение List<UserDto> с параметрами ids = {}, from = {}, size = {}", ids, from, size);
-        List<UserDto> response = adminUserService.getUsersByParams(ids, from, size);
-        log.info("Сформирован ответ Get /admin/users с телом: {}", response);
-        return response;
+    public List<UserDto> getAll(@RequestParam(required = false) List<Long> ids,
+                                @RequestParam(defaultValue = "0") int from,
+                                @RequestParam(defaultValue = "10") int size) {
+        log.info("Запрос на получение всех пользователей: {}", ids);
+        return userService.getAll(ids, from, size);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createNewUser(@Validated(CreateGroup.class) @RequestBody NewUserRequest newUserRequest) {
-        log.info("Поступил запрос Post /admin/users на создание User с телом {}", newUserRequest);
-        UserDto response = adminUserService.createNewUser(newUserRequest);
-        log.info("Сформирован ответ Post /admin/users с телом: {}", response);
-        return response;
+    public UserDto create(@Valid @RequestBody UserDto userDto) {
+        log.info("Запрос на создание пользователя: {}", userDto);
+        return userService.create(userDto);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable Long id) {
-        log.info("Поступил запрос Delete /admin/users/{} на удаление User с id = {}", id, id);
-        adminUserService.deleteUserById(id);
-        log.info("Выполнен запрос Delete /admin/users/{} на удаление User с id = {}", id, id);
+    public void delete(@PathVariable("userId") long id) {
+        log.info("Запрос на удаление пользователя: {}", id);
+        userService.delete(id);
     }
 
-    @GetMapping("/{id}")
-    public Optional<User> getUserById(@PathVariable Long id) {
-        log.info("Поступил запрос Get /admin/users/{} на получение User с id = {}", id, id);
-        Optional<User> response = adminUserService.getUserById(id);
-        log.info("Сформирован ответ Get /admin/users/{} с телом: {}", id, response);
-        return response;
+    @GetMapping("/short/{userId}")
+    public UserShortDto findUserShortDtoById(@PathVariable("userId") Long userId) {
+        log.info("Запрос на поиск пользователя: {}", userId);
+        return userService.findUserShortDtoById(userId);
+    }
+
+    @PostMapping("/short/map")
+    public Map<Long, UserShortDto> findUserShortDtoById(@RequestBody Set<Long> usersId) {
+        log.info("Запрос на получение пользователей по id: {}", usersId);
+        return userService.findUserShortDtoById(usersId);
     }
 }

@@ -1,25 +1,43 @@
 server:
   port: 0
 
+stat:
+  client:
+    url: stats-server
+main:
+  service:
+    app:
+      name: ewm-main-service
+
 spring:
-  datasource:
-    driverClassName: org.postgresql.Driver
-    username: dbuser
-    password: 12345
-    url: jdbc:postgresql://localhost:6542/eventdb
+  output:
+    ansi:
+      enabled: always
   jpa:
     hibernate:
       ddl-auto: none
-      format_sql: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
   sql:
     init:
       mode: always
-  cloud:
-    openfeign:
-      okhttp:
-        enabled: true
-      circuitbreaker:
-        enabled: true
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:6543/ewm-main
+    username: main
+    password: main
 
-  app:
-    name: ewm-main
+logging:
+  level:
+    org:
+      springframework:
+        orm:
+          jpa: TRACE
+          jpa.JpaTransactionManager: DEBUG
+        transaction: INFO
+        transaction.interceptor: TRACE
+      hibernate:
+        sql: DEBUG
+        orm.jdbc.bind: TRACE

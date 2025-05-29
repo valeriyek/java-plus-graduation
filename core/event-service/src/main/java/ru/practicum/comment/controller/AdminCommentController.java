@@ -1,40 +1,33 @@
 package ru.practicum.comment.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
+
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.CommentShortDto;
-import ru.practicum.comment.service.AdminCommentService;
+import ru.practicum.comment.dto.CommentDto;
+import ru.practicum.comment.dto.UpdateCommentDto;
+import ru.practicum.comment.service.CommentService;
 
-import java.util.List;
 
-@Slf4j
 @RestController
+@RequestMapping(path = "/admin/comments")
 @RequiredArgsConstructor
-@RequestMapping("/admin/comments")
-@Validated
 public class AdminCommentController {
 
-    private final AdminCommentService adminCommentService;
+    private final CommentService commentService;
 
-    @GetMapping
-    public List<CommentShortDto> getCommentsByParams(@RequestParam(required = false) List<Long> userIds,
-                                                     @RequestParam(required = false) List<Long> eventIds,
-                                                     @RequestParam(required = false, defaultValue = "0") Integer from,
-                                                     @RequestParam(required = false, defaultValue = "10") Integer size) {
-        log.info("Поступил запрос Get /admin/comments на получение List<CommentShortDto> с параметрами userIds = {}, eventIds = {}, from = {}, size = {}", userIds, eventIds, from, size);
-        List<CommentShortDto> response = adminCommentService.getCommentsByParams(userIds, eventIds, from, size);
-        log.info("Сформирован ответ Get /admin/comments с телом: {}", response);
-        return response;
-    }
-
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable Long id) {
-        log.info("Поступил запрос Delete /admin/comments/{} на удаление Comment с id = {}", id, id);
-        adminCommentService.deleteCommentById(id);
-        log.info("Выполнен запрос Delete /admin/comments/{} на удаление Comment с id = {}", id, id);
+    public void delete(@PathVariable("commentId") long id) {
+        commentService.adminDelete(id);
     }
+
+    @PatchMapping("/{commentId}")
+    public CommentDto update(@PathVariable("commentId") long id,
+                             @Valid @RequestBody UpdateCommentDto updateCommentDto) {
+        return commentService.adminUpdate(id, updateCommentDto);
+    }
+
 }

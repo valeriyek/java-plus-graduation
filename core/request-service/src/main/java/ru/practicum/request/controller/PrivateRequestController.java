@@ -1,76 +1,75 @@
 package ru.practicum.request.controller;
 
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.EventRequestStatusUpdateRequest;
-import ru.practicum.dto.EventRequestStatusUpdateResult;
 import ru.practicum.dto.ParticipationRequestDto;
+import ru.practicum.dto.RequestStatus;
+import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.request.service.RequestService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users/{userId}/requests")
 public class PrivateRequestController {
 
     private final RequestService requestService;
 
-    @GetMapping
-    public ResponseEntity<List<ParticipationRequestDto>> getRequestsOfUser(@PathVariable Long userId) {
-        log.info("[GET] Запросы пользователя с ID {}", userId);
-        List<ParticipationRequestDto> requests = requestService.getRequestsOfUser(userId);
-
-        return ResponseEntity.ok(requests);
+    @GetMapping("/users/{userId}/requests")
+    public List<ParticipationRequestDto> getUserRequests(@PathVariable Long userId) {
+        log.info("Запрос на получение запросов пользователя: {}", userId);
+        return requestService.getUserRequests(userId);
     }
 
-    @PostMapping
-    public ResponseEntity<ParticipationRequestDto> addRequest(@PathVariable Long userId,
-                                                              @RequestParam Long eventId) {
-        log.info("[POST] Добавление запроса на участие. Пользователь: {}, Событие: {}", userId, eventId);
-        ParticipationRequestDto request = requestService.addRequest(userId, eventId);
-
-        return ResponseEntity.status(201).body(request);
+    @PostMapping("/users/{userId}/requests")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ParticipationRequestDto createRequest(@PathVariable Long userId,
+                                                 @RequestParam Long eventId) {
+        log.info("Запрос на создание запроса пользователем: {}, в событии: {}", userId, eventId);
+        return requestService.createRequest(userId, eventId);
     }
 
-
-    @PatchMapping("/{requestId}/cancel")
-    public ResponseEntity<ParticipationRequestDto> cancelRequest(@PathVariable Long userId,
-                                                                 @PathVariable Long requestId) {
-        log.info("[PATCH] Отмена запроса с ID {} для пользователя {}", userId, requestId);
-        ParticipationRequestDto canceledRequest = requestService.cancelRequest(userId, requestId);
-        return ResponseEntity.ok(canceledRequest);
+    @PatchMapping("/users/{userId}/requests/{requestId}/cancel")
+    public ParticipationRequestDto cancelRequest(@PathVariable Long userId, @PathVariable Long requestId) {
+        log.info("Запрос на закрытие пользователем: {}, его запроса: {}", userId, requestId);
+        return requestService.cancelRequest(userId, requestId);
     }
 
-    @GetMapping("/{eventId}")
-    public ResponseEntity<List<ParticipationRequestDto>> getRequestsForUserEvent(@PathVariable Long userId,
-                                                                                 @PathVariable Long eventId) {
-        log.info("[GET] Запросы пользователя с ID {} по событию с ID {}", userId, eventId);
-        List<ParticipationRequestDto> requests = requestService.getRequestsForUserEvent(userId, eventId);
-
-        return ResponseEntity.ok(requests);
+    @GetMapping("/users/{userId}/events/{eventId}/requests")
+    public List<ParticipationRequestDto> getEventRequests(@PathVariable Long userId, @PathVariable Long eventId) {
+        log.info("Запрос на получение пользователем: {}, всех запросов к событию: {}", userId, eventId);
+        return requestService.getEventRequests(userId, eventId);
     }
 
-    @PatchMapping("/{eventId}/change")
-    public ResponseEntity<EventRequestStatusUpdateResult> changeRequestsStatus(@PathVariable Long userId,
-                                                                               @PathVariable Long eventId,
-                                                                               @RequestBody EventRequestStatusUpdateRequest statusUpdateRequest) {
-        log.info("[PATCH] Изменение статуса запроса пользователя с ID {} для события с ID {} с телом {}", userId, eventId, statusUpdateRequest);
-        EventRequestStatusUpdateResult response = requestService.changeRequestsStatus(userId, eventId, statusUpdateRequest);
-
-        return ResponseEntity.ok(response);
+    @PatchMapping("/users/{userId}/events/{eventId}/requests")
+    public EventRequestStatusUpdateResult updateStatusRequest(@PathVariable Long userId, @PathVariable Long eventId,
+                                                              @RequestBody EventRequestStatusUpdateRequest eventRequest) {
+        log.info("Запрос на обновление статусов запросов пользователем: {}, к событию: {}", userId, eventId);
+        return requestService.updateStatusRequest(userId, eventId, eventRequest);
     }
 
-    @GetMapping("/{eventId}/confirmedcount")
-    public Long getCountConfirmedRequestsByEventId(@PathVariable Long userId,
-                                                   @PathVariable Long eventId) {
-        log.info("[GET] Запрос кол-ва подтвержденных заявок по событию с ID {}", eventId);
-        Long response = requestService.getConfirmedRequests(userId, eventId);
-
-        return response;
+    @GetMapping("requests/events/{eventId}/{status}")
+    public List<ParticipationRequestDto> findAllByEventIdInAndStatus(@PathVariable(name = "eventId") List<Long> eventsId,
+                                                                     @PathVariable RequestStatus status) {
+        log.info("Запрос на поиск всех запросов событий: {}, со статусом: {}", eventsId, status);
+        return requestService.findAllByEventIdInAndStatus(eventsId, status);
     }
 
+    @GetMapping("requests/events/{eventId}/{status}/count")
+    public Long findCountByEventIdInAndStatus(@PathVariable Long eventId, @PathVariable RequestStatus status) {
+        log.info("Запрос на поиск количества запросов события: {}, со статусом: {}", eventId, status);
+        return requestService.findCountByEventIdInAndStatus(eventId, status);
+    }
+
+    @GetMapping("/users/{userId}/events/{eventId}/requests/requester")
+    public Optional<ParticipationRequestDto> findByRequesterIdAndEventId(@PathVariable Long userId, @PathVariable Long eventId) {
+        log.info("Запрос на поиск запроса пользователя: {}, к событию: {}", userId, eventId);
+        return requestService.findByRequesterIdAndEventId(userId, eventId);
+    }
 }

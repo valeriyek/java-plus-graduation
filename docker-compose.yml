@@ -1,41 +1,51 @@
-version: '3.8'
-
 services:
-  postgres-db:
+  stats-db:
     image: postgres:16.1
-    container_name: postgres-ewm-db
-    environment:
-      POSTGRES_USER: dbuser
-      POSTGRES_PASSWORD: 12345
-      POSTGRES_DB: postgres
+    container_name: postgres-ewm-stats-db
     ports:
-      - "6541:5432"
-    networks:
-      - ewm-net
+      - "6542:5432"
+    environment:
+      - POSTGRES_USER=stat
+      - POSTGRES_PASSWORD=stat
+      - POSTGRES_DB=ewm-stats
     healthcheck:
-      test: pg_isready -q -d postgres -U dbuser
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  ewm-db:
+    image: postgres:16.1
+    container_name: postgres-ewm-main-db
+    ports:
+      - "6543:5432"
+    environment:
+      - POSTGRES_USER=main
+      - POSTGRES_PASSWORD=main
+      - POSTGRES_DB=ewm-main
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
       interval: 5s
       retries: 10
 
   db-init:
     image: postgres:16.1
-    container_name: db-init
+    container_name: init-main-db
     depends_on:
-      postgres-db:
+      ewm-db:
         condition: service_healthy
-    networks:
-      - ewm-net
-    entrypoint:
-      - bash
-      - -c
-      - |
-        set -e
-        psql postgresql://dbuser:12345@postgres-ewm-db:5432/postgres -v ON_ERROR_STOP=1 <<-EOSQL
-          CREATE DATABASE userdb;
-          CREATE DATABASE eventdb;
-          CREATE DATABASE requestdb;
-          CREATE DATABASE statsdb;
-        EOSQL
-networks:
-  ewm-net:
+    entrypoint: |
+      bash -c '
+      set -e
+      until psql postgresql://main:main@ewm-db:5432/ewm-main -c "\q"; do
+        echo "PostgreSQL is unavailable - sleeping"
+        sleep 1
+      done
+      
+      psql postgresql://main:main@ewm-db:5432/ewm-main -v ON_ERROR_STOP=1 <<EOSQL
+      CREATE DATABASE ewm_category;
+      CREATE DATABASE ewm_user;
+      CREATE DATABASE ewm_request;
+      EOSQL
+      '

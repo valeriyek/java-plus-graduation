@@ -1,17 +1,17 @@
 package ru.practicum.compilation.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import ru.practicum.event.model.Event;
 
+import java.util.List;
 
-
-import java.util.Set;
-
-@Entity
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 @Table(name = "compilations")
 public class Compilation {
 
@@ -19,18 +19,15 @@ public class Compilation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title")
-    private String title;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "compilation_events",
+            joinColumns = @JoinColumn(name = "compilation_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id"))
+    private List<Event> events;
 
-    @Column(name = "pinned")
+    @Column(name = "pinned", nullable = false)
     private Boolean pinned;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "compilation_events",
-            joinColumns = @JoinColumn(name = "compilation_id")
-    )
-    @Column(name = "event_id")
-    private Set<Long> eventIds;
-
+    @Column(name = "title", nullable = false)
+    private String title;
 }

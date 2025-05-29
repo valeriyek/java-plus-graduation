@@ -1,28 +1,28 @@
 package ru.practicum.comment.controller;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.dto.CommentShortDto;
-import ru.practicum.comment.service.PublicCommentService;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.comment.dto.CommentDto;
+import ru.practicum.comment.service.CommentService;
+
+import java.util.Collection;
 
 @RestController
-@RequestMapping("/events/{eventId}/comments")
-@Slf4j
+@RequestMapping(path = "/comments")
 @RequiredArgsConstructor
 public class PublicCommentController {
-    private final PublicCommentService publicCommentService;
+    private final CommentService commentService;
 
-    @GetMapping()
-    public List<CommentShortDto> getAllCommentsById(@PathVariable long eventId) {
-        log.info("Поступил запрос Get /events/{eventId}/comments на получение всех comments у event с id = {}", eventId);
-        List<CommentShortDto> commentsDto = publicCommentService.getAllByEventId(eventId);
-        log.info("Сформирован ответ Get /events/{eventId}/comments с телом: {}", commentsDto);
-        return commentsDto;
+    @GetMapping("/events/{eventId}")
+    public Collection<CommentDto> findCommentsByEventId(@PathVariable(name = "eventId") Long eventId,
+                                                        @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                        @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        return commentService.findCommentsByEventId(eventId, from, size);
+    }
+
+    @GetMapping("/{commentId}")
+    public CommentDto findCommentById(@PathVariable(name = "commentId") Long commentId) {
+        return commentService.findCommentById(commentId);
     }
 }

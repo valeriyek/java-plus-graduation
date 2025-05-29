@@ -1,17 +1,25 @@
 package ru.practicum.request.model;
 
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import ru.practicum.dto.ParticipationRequestDto;
 
+import java.util.List;
 
-public class RequestMapper {
+import static ru.practicum.dto.Constants.FORMAT_DATETIME;
 
-    public static ParticipationRequestDto toParticipationRequestDto(ParticipationRequest request) {
-        ParticipationRequestDto dto = new ParticipationRequestDto();
-        dto.setId(request.getId());
-        dto.setCreated(request.getCreated());
-        dto.setEvent(request.getEvent());
-        dto.setRequester(request.getRequester());
-        dto.setStatus(request.getStatus().name());
-        return dto;
-    }
+
+@Mapper(componentModel = "spring")
+public interface RequestMapper {
+
+    @Mapping(target = "event", source = "eventId")
+    @Mapping(target = "requester", source = "requesterId")
+    @Mapping(target = "created", source = "createdOn", dateFormat = FORMAT_DATETIME)
+    ParticipationRequestDto toParticipationRequestDto(Request request);
+
+    @Mapping(target = "event", source = "eventId")
+    @Mapping(target = "requester", source = "requesterId")
+    @Mapping(target = "created", source = "createdOn", dateFormat = FORMAT_DATETIME)
+    List<ParticipationRequestDto> toParticipationRequestDto(List<Request> requests);
 }

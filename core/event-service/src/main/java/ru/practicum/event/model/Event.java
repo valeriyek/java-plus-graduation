@@ -1,74 +1,53 @@
 package ru.practicum.event.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
-import lombok.*;
-import ru.practicum.category.model.Category;
-import ru.practicum.dto.EventState;
-import ru.practicum.dto.Location;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import ru.practicum.dto.EventState;
 
 import java.time.LocalDateTime;
 
-
-@Entity
-@Table(name = "events")
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "events")
 public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-
-    @Column(nullable = false)
     private String annotation;
 
-    @Column(nullable = false)
+    @Column(name = "category_id")
+    private Long categoryId;
+
+    @Column(name = "created_on")
+    private LocalDateTime createdOn;
     private String description;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "event_date")
     private LocalDateTime eventDate;
 
-
-    @Embedded
+    @Column(name = "initiator_id")
+    private Long initiatorId;
+    @ManyToOne
+    @JoinColumn(name = "location_id")
     private Location location;
+    private Boolean paid;
 
+    @Column(name = "participant_limit")
+    private Long participantLimit;
 
-    private boolean paid;
+    @Column(name = "published_on")
+    private LocalDateTime publishedOn;
 
-    @Column(nullable = false)
-    private int participantLimit;
-
-    private boolean requestModeration;
+    @Column(name = "request_moderation")
+    private Boolean requestModeration;
 
     @Enumerated(EnumType.STRING)
     private EventState state;
-
-    @Column(nullable = false)
     private String title;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdOn;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime publishedOn;
-
-    @Column(name = "initiator_id", nullable = false)
-    private Long initiator;
-
-
-    @Column(name = "category_id", nullable = false)
-    private Long categoryId;
-
-
-    @Column(name = "views", nullable = false)
-    private Long views = 0L;
-
-    @Column(name = "confirmed_requests", nullable = false)
-    private Long confirmedRequests = 0L;
 }

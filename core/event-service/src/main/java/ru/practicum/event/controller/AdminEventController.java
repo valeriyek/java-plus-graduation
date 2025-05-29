@@ -1,77 +1,65 @@
 package ru.practicum.event.controller;
 
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.EventFullDto;
-import ru.practicum.dto.EventState;
-import ru.practicum.dto.UpdateEventAdminRequest;
-import ru.practicum.event.service.AdminEventService;
-import ru.practicum.event.model.Event;
-import ru.practicum.validation.UpdateGroup;
-
+import ru.practicum.event.dto.AdminEventParams;
+import ru.practicum.event.dto.UpdateEventAdminRequest;
+import ru.practicum.event.service.EventService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
+
+import static ru.practicum.dto.Constants.FORMAT_DATETIME;
+
 
 @Slf4j
 @RestController
+@RequestMapping(path = "/admin/events")
 @RequiredArgsConstructor
-@RequestMapping("/admin/events")
 @Validated
 public class AdminEventController {
 
-    private final AdminEventService adminEventService;
-
-    @PatchMapping("/{id}")
-    public EventFullDto updateEvent(@Validated(UpdateGroup.class) @RequestBody UpdateEventAdminRequest updateEventAdminRequest,
-                                    @PathVariable Long id) {
-        log.info("Поступил запрос Patch /admin/events/{} на обновление Event с телом = {}", id, updateEventAdminRequest);
-        EventFullDto response = adminEventService.updateEvent(id, updateEventAdminRequest);
-        log.info("Сформирован ответ Patch /admin/events/{} с телом: {}", id, response);
-        return response;
-    }
-
-    @PostMapping
-    public Event saveEvent(@RequestBody Event event) {
-        log.info("Поступил запрос Post /admin/events на сохранение Event с телом = {}", event);
-        Event response = adminEventService.saveEventFull(event);
-        log.info("Сформирован ответ Post /admin/events с телом: {}", response);
-        return response;
-    }
+    private final EventService eventService;
 
     @GetMapping
-    public List<EventFullDto> getEventsByParams(@RequestParam(required = false) List<Long> userIds,
-                                                @RequestParam(required = false) List<EventState> states,
-                                                @RequestParam(required = false) List<Long> categoryIds,
-                                                @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
-                                                @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
-                                                @RequestParam(required = false, defaultValue = "0") Long from,
-                                                @RequestParam(required = false, defaultValue = "10") Long size) {
-        log.info("Поступил запрос Get /admin/events на получение Events с параметрами: userIds = {}, " +
-                        "states = {}, categoryIds = {}, rangeStart = {}, rangeEnd = {}, from = {}, size = {}",
-                userIds, states, categoryIds, rangeStart, rangeEnd, from, size);
-        List<EventFullDto> response = adminEventService.findEventByParams(userIds, states, categoryIds, rangeStart, rangeEnd, from, size);
-        log.info("Сформирован ответ Get /admin/events с телом: {}", response);
-        return response;
+    public List<EventFullDto> adminGetAllEvents(
+            @RequestParam(required = false) List<Long> users,
+            @RequestParam(required = false) List<String> states,
+            @RequestParam(required = false) List<Long> categories,
+            @RequestParam(required = false) @DateTimeFormat(pattern = FORMAT_DATETIME) LocalDateTime rangeStart,
+            @RequestParam(required = false) @DateTimeFormat(pattern = FORMAT_DATETIME) LocalDateTime rangeEnd,
+            @RequestParam(defaultValue = "0") int from,
+            @RequestParam(defaultValue = "10") int size) {
+
+        AdminEventParams adminEventParams = new AdminEventParams(users, states, categories, rangeStart, rangeEnd, from, size);
+        return eventService.getAllEvents(adminEventParams);
     }
 
-    @GetMapping("/existsbycategory/{id}")
-    public boolean existsByCategoryId(@PathVariable Long id) {
-        log.info("Поступил запрос Get /admin/events/existsbycategory/{} на проверку существования события по id категории = {}", id, id);
-        boolean response = adminEventService.existsByCategoryId(id);
-        log.info("Сформирован ответ Get /admin/events/existsbycategory/{} с телом: {}", id, response);
-        return response;
+    @GetMapping("/check/category")
+    public List<EventFullDto> adminGetAllEventsByCategory(
+            @RequestParam Long categoryId,
+            @RequestParam(defaultValue = "0") int from,
+            @RequestParam(defaultValue = "10") int size) {
+        log.info("Административный запрос на поиск событий по категории: {}", categoryId);
+        return eventService.findAllByCategoryId(categoryId, from, size);
     }
 
-    @GetMapping("/findbyidin")
-    public Set<Event> findByIdIn(@RequestParam(required = false) Set<Long> ids) {
-        log.info("Поступил запрос Get /admin/events/findbyidin на получение событий по списку id {}", ids);
-        Set<Event> response = adminEventService.findByIdIn(ids);
-        log.info("Сформирован ответ Get /admin/events/findbyidin с телом: {}", response);
-        return response;
+    @PatchMapping("/{eventId}")
+    public EventFullDto adminUpdateEvent(@PathVariable("eventId") long eventId,
+                                         @Valid @RequestBody UpdateEventAdminRequest updateEventAdminRequest) {
+        log.info("Запрос на обновление админом события с id: {}, {}", eventId, updateEventAdminRequest);
+        return eventService.update(eventId, updateEventAdminRequest);
+    }
+
+    @GetMapping("/{eventId}")
+    public EventFullDto findEventById(@PathVariable(name = "eventId") Long eventId) {
+        log.info("Запрос на поиск любого события по id: {}", eventId);
+        return eventService.findEventById(eventId);
     }
 }

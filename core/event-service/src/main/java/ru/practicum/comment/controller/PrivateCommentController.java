@@ -1,64 +1,57 @@
 package ru.practicum.comment.controller;
 
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.CommentShortDto;
-import ru.practicum.dto.NewComment;
-import ru.practicum.dto.UpdateCommentDto;
-import ru.practicum.comment.service.PrivateCommentService;
-import ru.practicum.validation.CreateGroup;
-import ru.practicum.validation.UpdateGroup;
+import ru.practicum.comment.dto.CommentDto;
+import ru.practicum.comment.dto.InputCommentDto;
+import ru.practicum.comment.dto.UpdateCommentDto;
+import ru.practicum.comment.service.CommentService;
 
 import java.util.List;
 
-@Slf4j
 @RestController
+@RequestMapping("/comments")
 @RequiredArgsConstructor
-@RequestMapping("/users/")
-@Validated
 public class PrivateCommentController {
+    private final CommentService commentService;
 
-    private final PrivateCommentService privateCommentService;
-
-    @PostMapping("{userId}/events/{eventId}/comments")
     @ResponseStatus(HttpStatus.CREATED)
-    public CommentShortDto createComment(@PathVariable Long userId,
-                                         @PathVariable Long eventId,
-                                         @RequestBody @Validated(CreateGroup.class) NewComment newComment) {
-        log.info("Поступил запрос Post /users/{}/events/{}/comments на создание комментария с телом: {}", userId, eventId, newComment);
-        CommentShortDto response = privateCommentService.createComment(userId, eventId, newComment);
-        log.info("Сформирован ответ Post /users/{}/events/{}/comments с телом: {}", userId, eventId, response);
-        return response;
+    @PostMapping("/{eventId}/{userId}")
+    public CommentDto addComment(@PathVariable(name = "eventId") Long eventId,
+                                 @PathVariable(name = "userId") Long userId,
+                                 @Valid @RequestBody InputCommentDto inputCommentDto) {
+        return commentService.privateAdd(userId, eventId, inputCommentDto);
     }
 
-    @GetMapping("{userId}/comments")
-    public List<CommentShortDto> getUserComments(@PathVariable Long userId,
-                                                 @RequestParam(defaultValue = "0") Integer from,
-                                                 @RequestParam(defaultValue = "10") Integer size) {
-        log.info("Поступил запрос GET /users/{}/comments на получение списка комментариев с параметрами from={}, size={}", userId, from, size);
-        List<CommentShortDto> response = privateCommentService.getUserComments(userId, from, size);
-        log.info("Сформирован ответ GET /users/{}/comments с {} комментариями", userId, response.size());
-        return response;
-    }
-
-    @PatchMapping("{userId}/comments/{commentId}")
-    public CommentShortDto updateComment(@PathVariable Long userId,
-                                         @PathVariable Long commentId,
-                                         @RequestBody @Validated(UpdateGroup.class) UpdateCommentDto updateComment) {
-        log.info("Поступил запрос PATCH /users/{}/comments/{} на обновление комментария с телом: {}", userId, commentId, updateComment);
-        CommentShortDto response = privateCommentService.updateComment(userId, commentId, updateComment);
-        log.info("Сформирован ответ PATCH /users/{}/comments/{} с телом: {}", userId, commentId, response);
-        return response;
-    }
-
-    @DeleteMapping("{userId}/comments/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteComment(@PathVariable Long userId, @PathVariable Long commentId) {
-        log.info("Поступил запрос DELETE /users/{}/comments/{} на удаление комментария", userId, commentId);
-        privateCommentService.deleteComment(userId, commentId);
-        log.info("Выполнено удаление комментария DELETE /users/{}/comments/{}", userId, commentId);
+    @DeleteMapping("/{commentId}/{userId}")
+    public void deleteComment(@PathVariable(name = "commentId") Long commentId,
+                              @PathVariable(name = "userId") Long userId) {
+        commentService.privateDelete(userId, commentId);
+    }
+
+    @PatchMapping("/{commentId}/{userId}")
+    public CommentDto updateComment(@PathVariable(name = "commentId") Long commentId,
+                                    @PathVariable(name = "userId") Long userId,
+                                    @Valid @RequestBody UpdateCommentDto updateCommentDto) {
+        return commentService.privateUpdate(userId, commentId, updateCommentDto);
+    }
+
+    @GetMapping("/{eventId}/{userId}")
+    public List<CommentDto> findCommentsByEventIdAndUserId(@PathVariable(name = "eventId") Long eventId,
+                                                           @PathVariable(name = "userId") Long userId,
+                                                           @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                           @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        return commentService.findCommentsByEventIdAndUserId(eventId, userId, from, size);
+    }
+
+    @GetMapping("/users/{userId}")
+    public List<CommentDto> findCommentsByUserId(@PathVariable(name = "userId") Long userId,
+                                                 @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                 @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        return commentService.findCommentsByUserId(userId, from, size);
     }
 }

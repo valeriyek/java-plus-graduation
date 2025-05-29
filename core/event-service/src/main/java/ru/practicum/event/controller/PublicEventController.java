@@ -1,60 +1,79 @@
 package ru.practicum.event.controller;
 
+
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ParamHitDto;
+import ru.practicum.client.RestStatClient;
 import ru.practicum.dto.EventFullDto;
 import ru.practicum.dto.EventShortDto;
-import ru.practicum.dto.EventSort;
-import ru.practicum.event.service.PublicEventService;
-import ru.practicum.event.model.Event;
+import ru.practicum.event.dto.ReqParam;
+import ru.practicum.event.model.EventSort;
+import ru.practicum.event.service.EventService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
+import static ru.practicum.dto.Constants.FORMAT_DATETIME;
+
+
+@Slf4j
 @RestController
 @RequestMapping("/events")
 @RequiredArgsConstructor
-@Slf4j
-@Validated
 public class PublicEventController {
-    private final PublicEventService publicEventService;
 
-    @GetMapping("/{id}")
-    public EventFullDto getEventById(@PathVariable long id, HttpServletRequest request) {
-        log.info("Поступил запрос Get /events/{} на получение Event с id = {}", id, id);
-        EventFullDto response = publicEventService.getEventById(id, request);
-        log.info("Сформирован ответ Get /events/{} с телом: {}", id, response);
-        return response;
-    }
-
-    @GetMapping("/{id}/full")
-    public Optional<Event> getEventFullById(@PathVariable long id) {
-        log.info("Поступил запрос Get /events/{}/full на получение Event model с id = {}", id, id);
-        Optional<Event> response = publicEventService.getEventFullById(id);
-        log.info("Сформирован ответ Get /events/{}/full с телом: {}", id, response);
-        return response;
-    }
+    @Value("${main.service.app.name}")
+    private String mainServiceAppName;
+    private final EventService eventService;
+    private final RestStatClient statClient;
 
     @GetMapping
-    public List<EventShortDto> getEvents(@RequestParam(required = false) String text,
-                                         @RequestParam(required = false) List<Long> categories,
-                                         @RequestParam(required = false) Boolean paid,
-                                         @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
-                                         @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
-                                         @RequestParam(defaultValue = "false") Boolean onlyAvailable,
-                                         @RequestParam(required = false) EventSort sorts,
-                                         @RequestParam(defaultValue = "0") @PositiveOrZero(message = "Параметр 'from' не может быть отрицательным") int from,
-                                         @RequestParam(defaultValue = "10") @Positive(message = "Параметр 'size' должен быть больше 0") int size,
-                                         HttpServletRequest request) {
-        log.info("Поступил запрос Get /events на получение Events с text = {}, size = {}", text, size);
-        return publicEventService.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sorts, from, size, request);
+    public List<EventShortDto> publicGetAllEvents(@RequestParam(required = false) String text,
+                                                  @RequestParam(required = false) List<Long> categories,
+                                                  @RequestParam(required = false) Boolean paid,
+                                                  @RequestParam(required = false) @DateTimeFormat(pattern = FORMAT_DATETIME) LocalDateTime rangeStart,
+                                                  @RequestParam(required = false) @DateTimeFormat(pattern = FORMAT_DATETIME) LocalDateTime rangeEnd,
+                                                  @RequestParam(defaultValue = "false") Boolean onlyAvailable,
+                                                  @RequestParam(required = false) EventSort sort,
+                                                  @RequestParam(defaultValue = "0") int from,
+                                                  @RequestParam(defaultValue = "10") int size,
+                                                  HttpServletRequest request) {
+        ReqParam reqParam = ReqParam.builder()
+                .text(text)
+                .categories(categories)
+                .paid(paid)
+                .rangeStart(rangeStart)
+                .rangeEnd(rangeEnd)
+                .onlyAvailable(onlyAvailable)
+                .sort(sort)
+                .from(from)
+                .size(size)
+                .build();
+        log.info("Публичный запрос на поиск событий по параметрам: {}", reqParam);
+        List<EventShortDto> events = eventService.getAllEvents(reqParam);
+        hit(request);
+        return events;
     }
 
+    @GetMapping("/{id}")
+    public EventFullDto publicGetEvent(@PathVariable long id,
+                                       HttpServletRequest request) {
+        EventFullDto eventFullDto = eventService.publicGetEvent(id);
+        hit(request);
+        return eventFullDto;
+    }
+
+    private void hit(HttpServletRequest request) {
+        ParamHitDto endpointHitDto = new ParamHitDto();
+        endpointHitDto.setApp(mainServiceAppName);
+        endpointHitDto.setUri(request.getRequestURI());
+        endpointHitDto.setIp(request.getRemoteAddr());
+        endpointHitDto.setTimestamp(LocalDateTime.now());
+        statClient.hit(endpointHitDto);
+    }
 }

@@ -1,21 +1,12 @@
 package ru.practicum.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-
-import java.time.LocalDateTime;
-
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class EventShortDto {
-    private Long id;
-    private String annotation;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime eventDate;
-    private boolean paid;
-    private String title;
-    private Long confirmedRequests;
-    private Long views;
-    private UserShortDto initiator;
-    private CategoryDto category;
+@AllArgsConstructor
+public class EventShortDto extends EventBaseDto {
+    private String eventDate;
 }

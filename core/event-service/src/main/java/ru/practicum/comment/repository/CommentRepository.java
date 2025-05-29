@@ -4,25 +4,28 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import ru.practicum.comment.model.Comment;
+import ru.practicum.event.dto.EventCommentCount;
 
 import java.util.List;
 
+@Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    @Query("""
-        SELECT c
-        FROM Comment c
-        WHERE (:userIds is null or c.authorId in :userIds)
-        AND (:eventIds is null or c.eventId in :eventIds)
-        """)
-    List<Comment> findByAuthorIdInAndEventIdIn(
-            @Param("userIds") List<Long> userIds,
-            @Param("eventIds") List<Long> eventIds,
-            Pageable pageable
-    );
+    List<Comment> findAllByEventId(Long eventId, Pageable pageable);
 
-    List<Comment> findAllByEventId(long id);
+    List<Comment> findAllByEventIdAndAuthorId(Long eventId, Long authorId, Pageable pageable);
 
-    List<Comment> findByAuthorId(Long userId, Pageable pageable);
+    List<Comment> findAllByAuthorId(Long authorId, Pageable pageable);
+
+    long countCommentByEvent_Id(Long eventId);
+
+    @Query(value = """
+            SELECT c.event_id AS eventId, count(event_id) AS commentCount
+                   FROM comments c
+                   WHERE c.event_id IN :eventsIds
+                        GROUP BY c.event_id
+            """, nativeQuery = true)
+    List<EventCommentCount> findAllByEventIds(@Param("eventsIds") List<Long> eventsIds);
 }
