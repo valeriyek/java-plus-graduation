@@ -1,48 +1,42 @@
 package ru.practicum.ewm.exception;
 
-import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
+@Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
-
-    @ResponseBody
-    @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse onConstraintValidationException(ConstraintViolationException e) {
-        final List<Violation> violations = e.getConstraintViolations().stream()
-                .map(
-                        violation -> new Violation(
-                                violation.getPropertyPath().toString(),
-                                violation.getMessage()
-                        )
-                )
-                .collect(Collectors.toList());
-        return new ErrorResponse(violations);
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public ErrorResponse onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        final List<Violation> violations = e.getBindingResult().getFieldErrors().stream()
-                .map(error -> new Violation(error.getField(), error.getDefaultMessage()))
-                .collect(Collectors.toList());
-        return new ErrorResponse(violations);
-    }
-
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiError handleException(final Throwable e) {
+        log.error("{} - {}", HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        String stackTrace = sw.toString();
+        return new ApiError("Error ....",
+                e.getMessage(),
+                stackTrace);
+    }
+
+    @ExceptionHandler({ValidateException.class, MissingServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBadRequestException(BadRequestException e) {
-        final List<Violation> violations = List.of(new Violation("BAD REQUEST ERROR", e.getMessage()));
-        return new ErrorResponse(violations);
+    public ApiError validateException(final RuntimeException e) {
+        log.error("{} - {}", HttpStatus.BAD_REQUEST, e.getMessage(), e);
+        return new ApiError("Bad request",
+                e.getMessage(),
+                null);
+    }
+
+    public record ApiError(String reason,
+                           String message,
+                           String stackTrace) {
     }
 }

@@ -1,29 +1,27 @@
 package ru.practicum.ewm.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@ToString
 @Entity
-@Table(name = "endpoint_hit", schema = "public")
-@Data
+@Table(name = "endpoint_hits")
 public class EndpointHit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    private Integer id;
     @Column(name = "app")
-    private String app; // идентификатор сервиса для которого записывается информация
-
+    private String app;
     @Column(name = "uri")
-    private String uri; // URI для которого был осуществлен запрос
-
+    private String uri;
     @Column(name = "ip")
-    private String ip; // IP-адрес пользователя, осуществившего запрос
-
+    private String ip;
     @Column(name = "timestamp")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime timestamp; // дата и время, когда был совершен запрос к эндпоинту (в формате "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime timestamp;
 }
