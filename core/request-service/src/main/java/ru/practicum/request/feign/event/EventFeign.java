@@ -1,4 +1,4 @@
-package ru.practicum.request.feign;
+package ru.practicum.request.feign.event;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

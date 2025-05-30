@@ -1,4 +1,4 @@
-package ru.practicum.request.feign;
+package ru.practicum.request.feign.user;
 
 
 import org.springframework.cloud.openfeign.FeignClient;

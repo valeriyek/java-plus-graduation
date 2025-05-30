@@ -20,6 +20,9 @@ spring:
     url: jdbc:postgresql://localhost:6543/ewm_request
     username: main
     password: main
+stat:
+  client:
+    url: stats-server
 
 logging:
   level:

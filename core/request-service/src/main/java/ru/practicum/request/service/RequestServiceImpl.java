@@ -1,8 +1,9 @@
 package ru.practicum.request.service;
 
 
+
+
 import feign.FeignException;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,10 +11,10 @@ import ru.practicum.dto.*;
 import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.request.exception.*;
-import ru.practicum.request.feign.EventFeign;
-import ru.practicum.request.feign.UserFeign;
+import ru.practicum.request.feign.event.EventFeign;
+import ru.practicum.request.feign.user.UserFeign;
 import ru.practicum.request.model.Request;
-import ru.practicum.request.model.RequestMapper;
+import ru.practicum.request.mapper.RequestMapper;
 import ru.practicum.request.repository.RequestRepository;
 
 import java.time.LocalDateTime;
