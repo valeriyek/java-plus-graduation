@@ -17,6 +17,7 @@ import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.*;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.event.repository.LocationRepository;
+import ru.practicum.ewm.stats.messages.RecommendedEventProto;
 import ru.practicum.exception.ConditionNotMetException;
 import ru.practicum.exception.EntityNotFoundException;
 import ru.practicum.exception.InitiatorRequestException;
