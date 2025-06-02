@@ -44,7 +44,7 @@ public class KafkaClientConfig {
                 log.info("Готовим отправку в Kafka | topic='{}', eventId={}, timestamp={}, schema={}, partition=null",
                         topic, eventId, timestamp, event != null ? event.getSchema().getName() : "null");
                 try {
-                    Future<RecordMetadata> recordMetadataFuture = kafkaProducer.send(record, (metadata, exception) -> {
+                    kafkaProducer.send(record, (metadata, exception) -> {
                         if (exception != null) {
                             log.error("Ошибка при отправке сообщения в Kafka | topic={}, eventId={}, ошибка: {}",
                                     topic, eventId, exception.getMessage(), exception);
