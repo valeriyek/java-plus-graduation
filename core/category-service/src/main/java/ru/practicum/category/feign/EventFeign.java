@@ -7,7 +7,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.dto.EventFullDto;
 
 import java.util.List;
-
+/**
+ * Feign-клиент для обращения к сервису событий.
+ * <p>Используется в административных сценариях для проверки,
+ * есть ли события в категории.</p>
+ *
+ * <ul>
+ *   <li>GET /admin/events/check/category — возвращает список событий
+ *       по идентификатору категории с пагинацией.</li>
+ * </ul>
+ *
+ * @see ru.practicum.dto.EventFullDto
+ */
 @FeignClient(name = "event-service")
 public interface EventFeign {
     @GetMapping("/admin/events/check/category")

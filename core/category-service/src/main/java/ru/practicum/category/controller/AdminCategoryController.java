@@ -10,7 +10,22 @@ import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.service.CategoryService;
 import ru.practicum.dto.CategoryDto;
 
-
+/**
+ * Админский REST-контроллер для управления категориями событий.
+ * <p>
+ * Операции:
+ * <ul>
+ *     <li>POST — создание новой категории;</li>
+ *     <li>DELETE — удаление (если не связана с событиями);</li>
+ *     <li>PATCH — обновление имени/описания.</li>
+ * </ul>
+ *
+ * <p>Валидация запросов через {@link jakarta.validation.Valid}.
+ * Логирование всех вызовов — через {@code Slf4j}.
+ *
+ *
+ * @see ru.practicum.category.service.CategoryService
+ */
 @RestController
 @RequiredArgsConstructor
 @Validated
