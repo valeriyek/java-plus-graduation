@@ -7,7 +7,20 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
+/**
+ * Глобальный обработчик исключений для REST-контроллеров.
+ * <p>Перехватывает распространённые ошибки работы с категориями
+ * и возвращает унифицированный JSON-ответ {@code ErrorResponse}.</p>
+ *
+ * <ul>
+ *   <li>{@link CategoryNotFoundException} → 404 NOT_FOUND;</li>
+ *   <li>{@link IllegalArgumentException}, {@link MethodArgumentNotValidException} → 400 BAD_REQUEST;</li>
+ *   <li>{@link org.springframework.dao.DataIntegrityViolationException} → 409 CONFLICT;</li>
+ *   <li>Любые другие исключения → 500 INTERNAL_SERVER_ERROR.</li>
+ * </ul>
+ *
+ * <p>Все ошибки логируются через {@code Slf4j}.</p>
+ */
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {

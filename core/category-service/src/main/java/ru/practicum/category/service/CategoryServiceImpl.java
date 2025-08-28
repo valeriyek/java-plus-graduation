@@ -23,7 +23,27 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
+/**
+ * Реализация {@link CategoryService}.
+ * <p>Отвечает за бизнес-логику категорий событий:
+ * хранение в БД, преобразование в DTO и проверку зависимостей с событиями.</p>
+ *
+ * <p>Используемые технологии:</p>
+ * <ul>
+ *   <li>{@link CategoryRepository} — доступ к таблице категорий;</li>
+ *   <li>{@link CategoryMapper} — преобразование между сущностью и DTO;</li>
+ *   <li>{@link EventFeign} — проверка связанных событий в сервисе событий.</li>
+ * </ul>
+ *
+ * <p>Особенности:</p>
+ * <ul>
+ *   <li>При удалении категории проверяет отсутствие связанных событий через event-service;</li>
+ *   <li>При нарушении связей или уникальности выбрасывает {@link org.springframework.dao.DataIntegrityViolationException};</li>
+ *   <li>При отсутствии категории выбрасывает {@link ru.practicum.category.exception.CategoryNotFoundException}.</li>
+ * </ul>
+ *
+ * <p>Все операции логируются через {@code Slf4j}.</p>
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
