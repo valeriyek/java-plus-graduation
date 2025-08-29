@@ -9,7 +9,22 @@ import ru.practicum.comment.model.Comment;
 import ru.practicum.event.dto.EventCommentCount;
 
 import java.util.List;
-
+/**
+ * Spring Data JPA-репозиторий для сущностей {@link ru.practicum.comment.model.Comment}.
+ * <p>Предоставляет стандартные CRUD-операции и специализированные методы выборки.</p>
+ *
+ * <ul>
+ *   <li>{@link #findAllByEventId(Long, org.springframework.data.domain.Pageable)} —
+ *       комментарии по событию с пагинацией;</li>
+ *   <li>{@link #findAllByEventIdAndAuthorId(Long, Long, org.springframework.data.domain.Pageable)} —
+ *       комментарии пользователя для конкретного события;</li>
+ *   <li>{@link #findAllByAuthorId(Long, org.springframework.data.domain.Pageable)} —
+ *       все комментарии пользователя;</li>
+ *   <li>{@link #countCommentByEvent_Id(Long)} — количество комментариев к событию;</li>
+ *   <li>{@link #findAllByEventIds(List)} — агрегированное количество комментариев по списку событий
+ *       (через нативный SQL-запрос, возвращает {@link ru.practicum.event.dto.EventCommentCount}).</li>
+ * </ul>
+ */
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 

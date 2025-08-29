@@ -30,7 +30,37 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+/**
+ * Реализация {@link CommentService}.
+ * <p>Инкапсулирует бизнес-логику управления комментариями пользователей:</p>
+ *
+ * <ul>
+ *   <li>Приватные операции: создание, редактирование и удаление собственных комментариев;</li>
+ *   <li>Административные операции: обновление и удаление комментариев без ограничений;</li>
+ *   <li>Публичные операции: получение комментариев по событию, пользователю или идентификатору.</li>
+ * </ul>
+ *
+ * <p>Используемые зависимости:</p>
+ * <ul>
+ *   <li>{@link CommentRepository} — доступ к таблице {@code comments};</li>
+ *   <li>{@link EventRepository} — валидация существования и статуса события;</li>
+ *   <li>{@link UserFeign} — обращение к user-service для загрузки авторов комментариев;</li>
+ *   <li>{@link RequestFeign} — проверка наличия заявки пользователя на событие перед созданием комментария;</li>
+ *   <li>{@link CommentMapper} — преобразование между сущностью и DTO.</li>
+ * </ul>
+ *
+ * <p>Ключевые проверки:</p>
+ * <ul>
+ *   <li>Нельзя комментировать собственное событие;</li>
+ *   <li>Нельзя комментировать событие без подтверждённой заявки;</li>
+ *   <li>Редактировать/удалять можно только свой комментарий (исключение {@link ru.practicum.exception.InitiatorRequestException});</li>
+ *   <li>Работа только с опубликованными событиями ({@link ru.practicum.dto.EventState#PUBLISHED}).</li>
+ * </ul>
+ *
+ * <p>Все операции логируются через {@code Slf4j}. В случае ошибок сервис выбрасывает
+ * {@link ru.practicum.exception.EntityNotFoundException}, {@link ru.practicum.exception.ValidationException}
+ * или {@link ru.practicum.exception.InitiatorRequestException}.</p>
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

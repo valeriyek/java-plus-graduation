@@ -11,7 +11,22 @@ import ru.practicum.comment.dto.UpdateCommentDto;
 import ru.practicum.comment.service.CommentService;
 
 import java.util.List;
-
+/**
+ * Приватный REST-контроллер для работы с комментариями пользователями.
+ * <p>Позволяет авторизованным пользователям создавать, изменять, удалять
+ * и просматривать собственные комментарии к событиям.</p>
+ *
+ * <ul>
+ *   <li>POST /comments/{eventId}/{userId} — добавить комментарий к событию;</li>
+ *   <li>DELETE /comments/{commentId}/{userId} — удалить свой комментарий;</li>
+ *   <li>PATCH /comments/{commentId}/{userId} — обновить свой комментарий;</li>
+ *   <li>GET /comments/{eventId}/{userId} — список комментариев пользователя для события;</li>
+ *   <li>GET /comments/users/{userId} — все комментарии пользователя.</li>
+ * </ul>
+ *
+ * <p>Валидация запроса выполняется через {@link jakarta.validation.Valid}.
+ * Логика реализована в {@link ru.practicum.comment.service.CommentService}.</p>
+ */
 @RestController
 @RequestMapping("/comments")
 @RequiredArgsConstructor

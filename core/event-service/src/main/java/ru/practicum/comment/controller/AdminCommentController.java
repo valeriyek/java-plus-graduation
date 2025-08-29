@@ -10,7 +10,18 @@ import ru.practicum.comment.dto.CommentDto;
 import ru.practicum.comment.dto.UpdateCommentDto;
 import ru.practicum.comment.service.CommentService;
 
-
+/**
+ * Админский REST-контроллер для управления комментариями.
+ * <p>Предоставляет операции модерации, доступные только администраторам.</p>
+ *
+ * <ul>
+ *   <li>DELETE /admin/comments/{commentId} — удаление комментария;</li>
+ *   <li>PATCH /admin/comments/{commentId} — обновление текста или состояния комментария.</li>
+ * </ul>
+ *
+ * <p>Все запросы проходят валидацию входных данных.
+ * Используется {@link CommentService} как слой бизнес-логики.</p>
+ */
 @RestController
 @RequestMapping(path = "/admin/comments")
 @RequiredArgsConstructor

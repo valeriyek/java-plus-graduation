@@ -7,7 +7,17 @@ import ru.practicum.comment.dto.CommentDto;
 import ru.practicum.comment.service.CommentService;
 
 import java.util.Collection;
-
+/**
+ * Публичный REST-контроллер для работы с комментариями.
+ * <p>Доступен без авторизации. Предоставляет только операции чтения.</p>
+ *
+ * <ul>
+ *   <li>GET /comments/events/{eventId} — постраничное получение комментариев к событию;</li>
+ *   <li>GET /comments/{commentId} — получение комментария по идентификатору.</li>
+ * </ul>
+ *
+ * <p>Бизнес-логика реализована в {@link ru.practicum.comment.service.CommentService}.</p>
+ */
 @RestController
 @RequestMapping(path = "/comments")
 @RequiredArgsConstructor

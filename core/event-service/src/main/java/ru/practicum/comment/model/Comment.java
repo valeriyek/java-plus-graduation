@@ -7,7 +7,18 @@ import lombok.ToString;
 import ru.practicum.event.model.Event;
 
 import java.time.LocalDateTime;
-
+/**
+ * JPA-сущность комментария к событию.
+ * <p>Отображается на таблицу {@code comments}.</p>
+ *
+ * <ul>
+ *   <li>{@code id} — первичный ключ, автоинкремент;</li>
+ *   <li>{@code event} — ссылка на событие, к которому относится комментарий;</li>
+ *   <li>{@code authorId} — идентификатор пользователя-автора;</li>
+ *   <li>{@code text} — текст комментария, не пустой;</li>
+ *   <li>{@code created} — дата и время создания комментария.</li>
+ * </ul>
+ */
 @Entity
 @Table(name = "comments")
 @Getter
