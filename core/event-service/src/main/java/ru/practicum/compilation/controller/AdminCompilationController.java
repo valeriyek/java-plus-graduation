@@ -11,7 +11,19 @@ import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.compilation.service.CompilationService;
 
-
+/**
+ * Админский REST-контроллер для управления подборками событий.
+ * <p>Предоставляет CRUD-операции, доступные только администраторам.</p>
+ *
+ * <ul>
+ *   <li>POST /admin/compilations — создание новой подборки;</li>
+ *   <li>DELETE /admin/compilations/{compId} — удаление подборки;</li>
+ *   <li>PATCH /admin/compilations/{compId} — обновление данных подборки.</li>
+ * </ul>
+ *
+ * <p>Все запросы валидируются через {@link jakarta.validation.Valid}.
+ * Бизнес-логика реализована в {@link ru.practicum.compilation.service.CompilationService}.</p>
+ */
 @RestController
 @RequestMapping(path = "/admin/compilations")
 @RequiredArgsConstructor

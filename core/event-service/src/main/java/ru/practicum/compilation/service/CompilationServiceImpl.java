@@ -28,7 +28,28 @@ import ru.practicum.feign.UserFeign;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
+/**
+ * Реализация {@link CompilationService}.
+ * <p>Управляет подборками событий: создание, обновление, удаление и чтение (с пагинацией/фильтрацией).</p>
+ *
+ * <p>Зависимости:</p>
+ * <ul>
+ *   <li>{@link CompilationRepository} — доступ к сущностям {@link ru.practicum.compilation.model.Compilation};</li>
+ *   <li>{@link EventRepository} — загрузка событий по id; </li>
+ *   <li>{@link EventMapper} — преобразование {@link ru.practicum.event.model.Event} → {@link ru.practicum.dto.EventShortDto};</li>
+ *   <li>{@link CategoryFeign} — обогащение карточек событий категориями ({@link ru.practicum.dto.CategoryDto});</li>
+ *   <li>{@link UserFeign} — обогащение карточек событий авторами ({@link ru.practicum.dto.UserShortDto});</li>
+ *   <li>{@link CompilationMapper} — преобразование сущностей ↔ DTO.</li>
+ * </ul>
+ *
+ * <p>Особенности реализации:</p>
+ * <ul>
+ *   <li>При создании/обновлении проверяется существование переданных событий; при отсутствии — {@link ru.practicum.exception.EntityNotFoundException};</li>
+ *   <li>Публичное чтение поддерживает фильтр по {@code pinned} и пагинацию;</li>
+ *   <li>Карточки событий в подборках обогащаются категориями и авторами через межсервисные вызовы;</li>
+ *   <li>Все операции логируются через {@code Slf4j}.</li>
+ * </ul>
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -155,7 +176,13 @@ public class CompilationServiceImpl implements CompilationService {
         List<EventShortDto> eventDtos = getEventShortDtos(events);
         return compilationMapper.toCompilationDto(compilation, eventDtos);
     }
-
+    /**
+     * Преобразует список событий в список {@link EventShortDto},
+     * дополнительно обогащая DTO категориями и пользователями.
+     *
+     * @param events список событий
+     * @return список кратких DTO событий
+     */
     private List<EventShortDto> getEventShortDtos(List<Event> events) {
         List<EventShortDto> dtos = eventMapper.toEventShortDto(events);
         log.info("Результат маппинга в EventShortDto: {}", dtos);
@@ -164,6 +191,16 @@ public class CompilationServiceImpl implements CompilationService {
         return dtos;
     }
 
+
+    /**
+     * Подгружает категории через {@link CategoryFeign} и
+     * проставляет их в соответствующие {@link EventShortDto}.
+     *
+     * @param dtos   список кратких DTO событий (будет модифицирован)
+     * @param events исходные события
+     * @return обновлённый список DTO
+     * @throws ru.practicum.exception.EntityNotFoundException если категории не найдены
+     */
     private List<EventShortDto> addCategoriesDto(List<EventShortDto> dtos, List<Event> events) {
         Map<Long, EventShortDto> dtoMap = dtos.stream().collect(Collectors.toMap(EventShortDto::getId, Function.identity()));
 
@@ -181,7 +218,15 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("Добавляем категории: {}", dtos);
         return dtos;
     }
-
+    /**
+     * Подгружает авторов событий через {@link UserFeign} и
+     * проставляет их в соответствующие {@link EventShortDto}.
+     *
+     * @param dtos   список кратких DTO событий (будет модифицирован)
+     * @param events исходные события
+     * @return обновлённый список DTO
+     * @throws ru.practicum.exception.EntityNotFoundException если пользователи не найдены
+     */
     private List<EventShortDto> addUserShortDto(List<EventShortDto> dtos, List<Event> events) {
         Map<Long, EventShortDto> dtoMap = dtos.stream().collect(Collectors.toMap(EventShortDto::getId, Function.identity()));
 

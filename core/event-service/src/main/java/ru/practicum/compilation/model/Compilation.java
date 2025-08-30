@@ -5,7 +5,18 @@ import lombok.*;
 import ru.practicum.event.model.Event;
 
 import java.util.List;
-
+/**
+ * JPA-сущность подборки событий.
+ * <p>Отображается на таблицу {@code compilations}.</p>
+ *
+ * <ul>
+ *   <li>{@code id} — первичный ключ, автоинкремент;</li>
+ *   <li>{@code events} — список событий, включённых в подборку
+ *       (связь многие-ко-многим через таблицу {@code compilation_events});</li>
+ *   <li>{@code pinned} — признак закреплённой подборки на главной странице;</li>
+ *   <li>{@code title} — название подборки, обязательное.</li>
+ * </ul>
+ */
 @Getter
 @Setter
 @AllArgsConstructor
