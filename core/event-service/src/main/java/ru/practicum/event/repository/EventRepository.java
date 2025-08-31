@@ -11,7 +11,30 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-
+/**
+ * Spring Data JPA-репозиторий для работы с событиями ({@link ru.practicum.event.model.Event}).
+ * <p>Предоставляет стандартные CRUD-операции и набор кастомных запросов.</p>
+ *
+ * <ul>
+ *   <li>{@link #findEvents(String, List, Boolean, LocalDateTime, LocalDateTime, Boolean, Pageable)} —
+ *       публичный поиск событий с фильтрацией по тексту, категориям, платности,
+ *       временному диапазону и признаку публикации;</li>
+ *   <li>{@link #findAdminEvents(List, List, List, LocalDateTime, LocalDateTime, Pageable)} —
+ *       административный поиск с фильтрацией по пользователям, состояниям и категориям;</li>
+ *   <li>{@link #findByIdAndInitiatorId(Long, Long)} —
+ *       поиск события по id и id инициатора (для приватного API);</li>
+ *   <li>{@link #findAllByIdIsIn(Collection)} —
+ *       выборка событий по множеству id;</li>
+ *   <li>{@link #findAllByInitiatorId(Long)} и {@link #findAllByInitiatorId(Long, Pageable)} —
+ *       выборка событий инициатора (все или постранично);</li>
+ *   <li>{@link #findByIdAndState(Long, ru.practicum.dto.EventState)} —
+ *       поиск события по id и состоянию;</li>
+ *   <li>{@link #findAllByCategoryId(Long, Pageable)} —
+ *       выборка событий по категории (с пагинацией).</li>
+ * </ul>
+ *
+ * <p>Используется в сервисном слое для публичного, приватного и административного API.</p>
+ */
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 

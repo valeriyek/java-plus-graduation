@@ -17,7 +17,36 @@ import java.util.List;
 
 import static ru.practicum.dto.Constants.FORMAT_DATETIME;
 
-
+/**
+ * MapStruct-мэппер для преобразования событий между сущностью и DTO.
+ * <p>Реализация генерируется MapStruct, бин регистрируется в Spring.</p>
+ *
+ * <ul>
+ *   <li>{@link #toEventShortDto(List)} —
+ *       преобразует список {@link ru.practicum.event.model.Event} в список {@link ru.practicum.dto.EventShortDto};</li>
+ *   <li>{@link #toEventFullDto(Event)} —
+ *       преобразует событие в {@link ru.practicum.dto.EventFullDto} без категории и инициатора;</li>
+ *   <li>{@link #toEventFullDto(Event, ru.practicum.dto.CategoryDto)} —
+ *       преобразует событие в {@link ru.practicum.dto.EventFullDto}, включая категорию;</li>
+ *   <li>{@link #toEventFullDto(Event, ru.practicum.dto.UserShortDto)} —
+ *       преобразует событие в {@link ru.practicum.dto.EventFullDto}, включая инициатора;</li>
+ *   <li>{@link #toEventFullDto(Event, ru.practicum.dto.UserShortDto, ru.practicum.dto.CategoryDto)} —
+ *       преобразует событие в {@link ru.practicum.dto.EventFullDto}, включая и категорию, и инициатора;</li>
+ *   <li>{@link #toEventFullDtos(List)} —
+ *       преобразует список событий в список {@link ru.practicum.dto.EventFullDto};</li>
+ *   <li>{@link #toEvent(ru.practicum.event.dto.NewEventDto)} —
+ *       создаёт сущность {@link ru.practicum.event.model.Event} из {@link ru.practicum.event.dto.NewEventDto}
+ *       (часть полей игнорируется и будет заполнена сервисным слоем);</li>
+ *   <li>{@link #toEventShortDtos(List)} —
+ *       преобразует список {@link ru.practicum.dto.EventFullDto} в список {@link ru.practicum.dto.EventShortDto}.</li>
+ * </ul>
+ *
+ * <p>Дополнительно содержит мапперы по умолчанию для преобразования даты:</p>
+ * <ul>
+ *   <li>{@link #stringToLocalDateTime(String)} — строка → {@link java.time.LocalDateTime};</li>
+ *   <li>{@link #localDateTimeToString(LocalDateTime)} — {@link java.time.LocalDateTime} → строка.</li>
+ * </ul>
+ */
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface EventMapper {
 

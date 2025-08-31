@@ -16,7 +16,26 @@ import java.time.LocalDateTime;
 
 import static ru.practicum.dto.Constants.FORMAT_DATETIME;
 
-
+/**
+ * Базовый DTO для обновления события.
+ * <p>Содержит общий набор полей, которые могут изменяться как пользователями, так и администраторами.</p>
+ *
+ * <ul>
+ *   <li>{@code annotation} — краткая аннотация, от 20 до 2000 символов;</li>
+ *   <li>{@code category} — новая категория события (идентификатор, положительное число);</li>
+ *   <li>{@code description} — полное описание, от 20 до 7000 символов;</li>
+ *   <li>{@code eventDate} — новая дата и время проведения события,
+ *       должна быть в будущем, формат {@link ru.practicum.dto.Constants#FORMAT_DATETIME};</li>
+ *   <li>{@code location} — новые координаты события ({@link ru.practicum.dto.LocationDto});</li>
+ *   <li>{@code paid} — признак платного участия;</li>
+ *   <li>{@code participantLimit} — лимит участников (0 или положительное число);</li>
+ *   <li>{@code requestModeration} — нужно ли подтверждать заявки пользователей;</li>
+ *   <li>{@code title} — новый заголовок события, от 3 до 120 символов.</li>
+ * </ul>
+ *
+ * <p>Используется как родитель для:
+ * {@link UpdateEventUserRequest} и {@link UpdateEventAdminRequest}.</p>
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

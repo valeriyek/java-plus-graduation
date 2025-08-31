@@ -34,7 +34,24 @@ import java.util.stream.Collectors;
 
 import static ru.practicum.dto.Constants.FORMAT_DATETIME;
 
-
+/**
+ * Реализация {@link EventService}.
+ * <p>Публичные, приватные и админские операции над событиями: поиск, создание,
+ * обновление, лайки, рекомендации. Обогащает DTO категориями, инициаторами,
+ * количеством подтверждённых заявок, рейтингом и числом комментариев.</p>
+ *
+ * <p>Зависимости:</p>
+ * <ul>
+ *   <li>{@link EventRepository}, {@link LocationRepository} — доступ к БД;</li>
+ *   <li>{@link EventMapper} — преобразование сущностей ↔ DTO;</li>
+ *   <li>{@link UserFeign}, {@link CategoryFeign}, {@link RequestFeign} — межсервисные запросы;</li>
+ *   <li>{@link CommentRepository} — агрегаты по комментариям;</li>
+ *   <li>{@link AnalyzerClient}, {@link CollectorClient} — рейтинг/статистика, лайки/просмотры.</li>
+ * </ul>
+ *
+ * <p>Исключения: {@link EntityNotFoundException}, {@link ValidationException},
+ * {@link ConditionNotMetException}, {@link InitiatorRequestException}.</p>
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -48,6 +65,7 @@ public class EventServiceImpl implements EventService {
     private final CommentRepository commentRepository;
     private final AnalyzerClient analyzerClient;
     private final CollectorClient collectorClient;
+
     @Override
     public List<EventShortDto> getAllEvents(ReqParam reqParam) {
         Pageable pageable = PageRequest.of(reqParam.getFrom(), reqParam.getSize());
@@ -321,8 +339,12 @@ public class EventServiceImpl implements EventService {
     }
 
 
-
-
+    /**
+     * Применяет поля из запроса обновления к сущности события (без сохранения).
+     *
+     * @param event         изменяемая сущность события
+     * @param updateRequest базовый DTO обновления
+     */
     private void checkEvent(Event event, UpdateEventBaseRequest updateRequest) {
         if (updateRequest.getAnnotation() != null && !updateRequest.getAnnotation().isBlank()) {
             event.setAnnotation(updateRequest.getAnnotation());
@@ -357,6 +379,15 @@ public class EventServiceImpl implements EventService {
             event.setTitle(updateRequest.getTitle());
         }
     }
+
+    /**
+     * Добавляет в список событий количество подтверждённых заявок.
+     * Данные загружаются из request-service.
+     *
+     * @param eventDtos события в формате {@link EventFullDto}
+     * @return те же DTO с заполненным {@code confirmedRequests}
+     * @throws EntityNotFoundException при ошибке обращения в request-service
+     */
     private List<EventFullDto> addRequests(List<EventFullDto> eventDtos) {
         List<Long> eventIds = eventDtos.stream().map(EventFullDto::getId).toList();
         List<ParticipationRequestDto> requests;
@@ -372,6 +403,13 @@ public class EventServiceImpl implements EventService {
         return eventDtos;
     }
 
+    /**
+     * Добавляет к событию количество подтверждённых заявок.
+     *
+     * @param eventDto событие
+     * @return то же событие с заполненным {@code confirmedRequests}
+     * @throws EntityNotFoundException при ошибке обращения в request-service
+     */
     private EventFullDto addRequests(EventFullDto eventDto) {
         try {
             eventDto.setConfirmedRequests(
@@ -383,6 +421,13 @@ public class EventServiceImpl implements EventService {
         return eventDto;
     }
 
+    /**
+     * Загружает категорию по идентификатору через category-service.
+     *
+     * @param categoryId id категории
+     * @return {@link CategoryDto}
+     * @throws EntityNotFoundException если категория недоступна/не найдена
+     */
     private CategoryDto getCategoryDto(Long categoryId) {
         try {
             CategoryDto category = categoryFeign.getCategoryById(categoryId);
@@ -393,6 +438,14 @@ public class EventServiceImpl implements EventService {
         }
     }
 
+    /**
+     * Обогащает события категориями (map по {@code event.categoryId}).
+     *
+     * @param dtos   события (будут модифицированы)
+     * @param events исходные сущности событий
+     * @return те же DTO с заполненным {@code category}
+     * @throws EntityNotFoundException при ошибке обращения в category-service
+     */
     private List<EventFullDto> addCategoriesDto(List<EventFullDto> dtos, List<Event> events) {
         Map<Long, EventFullDto> dtoMap = dtos.stream().collect(Collectors.toMap(EventFullDto::getId, Function.identity()));
 
@@ -411,6 +464,13 @@ public class EventServiceImpl implements EventService {
         return dtos;
     }
 
+    /**
+     * Загружает краткую информацию о пользователе через user-service.
+     *
+     * @param userId id пользователя
+     * @return {@link UserShortDto}
+     * @throws EntityNotFoundException если пользователь недоступен/не найден
+     */
     private UserShortDto getUserShortDto(Long userId) {
         try {
             UserShortDto user = userFeign.findUserShortDtoById(userId);
@@ -421,6 +481,14 @@ public class EventServiceImpl implements EventService {
         }
     }
 
+    /**
+     * Обогащает события инициаторами (map по {@code event.initiatorId}).
+     *
+     * @param dtos   события (будут модифицированы)
+     * @param events исходные сущности событий
+     * @return те же DTO с заполненным {@code initiator}
+     * @throws EntityNotFoundException при ошибке обращения в user-service
+     */
     private List<EventFullDto> addUserShortDto(List<EventFullDto> dtos, List<Event> events) {
         Map<Long, EventFullDto> dtoMap = dtos.stream().collect(Collectors.toMap(EventFullDto::getId, Function.identity()));
 
@@ -438,6 +506,13 @@ public class EventServiceImpl implements EventService {
         log.info("Добавляем пользователей: {}", dtos);
         return dtos;
     }
+
+    /**
+     * Проставляет рейтинг для списка событий, запрашивая агрегаты у {@link AnalyzerClient}.
+     *
+     * @param events список событий
+     * @return те же события с заполненным {@code rating}
+     */
     private List<EventFullDto> addRating(List<EventFullDto> events) {
         Map<Long, Double> ratings = analyzerClient
                 .getInteractionsCount(events.stream().map(EventFullDto::getId).collect(Collectors.toList()));
@@ -448,6 +523,12 @@ public class EventServiceImpl implements EventService {
         return events;
     }
 
+    /**
+     * Проставляет рейтинг для одного события.
+     *
+     * @param event событие
+     * @return событие с заполненным {@code rating}
+     */
     private EventFullDto addRating(EventFullDto event) {
         Map<Long, Double> rating = analyzerClient
                 .getInteractionsCount(List.of(event.getId()));

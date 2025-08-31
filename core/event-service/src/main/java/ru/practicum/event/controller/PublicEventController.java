@@ -19,7 +19,28 @@ import java.util.List;
 
 import static ru.practicum.dto.Constants.FORMAT_DATETIME;
 
-
+/**
+ * Публичный REST-контроллер для работы с событиями.
+ * <p>Доступен всем пользователям, позволяет искать, просматривать и рекомендовать события.</p>
+ *
+ * <ul>
+ *   <li>GET /events — поиск событий по фильтрам (текст, категории, платность,
+ *       временной диапазон, только доступные места, сортировка, пагинация);</li>
+ *   <li>GET /events/{id} — получение события по идентификатору;</li>
+ *   <li>GET /events/recommendations — персональные рекомендации событий для пользователя;</li>
+ *   <li>PUT /events/{eventId}/like — поставить лайк событию.</li>
+ * </ul>
+ *
+ * <p>Фильтрация параметров инкапсулируется в {@link ru.practicum.event.dto.ReqParam}.
+ * Даты передаются в формате {@link ru.practicum.dto.Constants#FORMAT_DATETIME}.
+ * </p>
+ *
+ * <p>Все события возвращаются в виде {@link ru.practicum.dto.EventShortDto} (списки)
+ * или {@link ru.practicum.dto.EventFullDto} (детали).</p>
+ *
+ * <p>Для сбора статистики просмотров используется {@link ru.practicum.client.CollectorClient}.
+ * Вызовы логируются через {@code Slf4j}.</p>
+ */
 @Slf4j
 @RestController
 @RequestMapping("/events")

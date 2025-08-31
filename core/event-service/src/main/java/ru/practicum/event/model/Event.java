@@ -6,7 +6,27 @@ import lombok.*;
 import ru.practicum.dto.EventState;
 
 import java.time.LocalDateTime;
-
+/**
+ * JPA-сущность события.
+ * <p>Отображается на таблицу {@code events}.</p>
+ *
+ * <ul>
+ *   <li>{@code id} — первичный ключ, автоинкремент;</li>
+ *   <li>{@code annotation} — краткая аннотация события;</li>
+ *   <li>{@code categoryId} — идентификатор категории (внешний ключ на {@code categories});</li>
+ *   <li>{@code createdOn} — дата/время создания события;</li>
+ *   <li>{@code description} — полное описание события;</li>
+ *   <li>{@code eventDate} — дата/время проведения события;</li>
+ *   <li>{@code initiatorId} — идентификатор инициатора (внешний ключ на {@code users});</li>
+ *   <li>{@code location} — ссылка на локацию события ({@link Location});</li>
+ *   <li>{@code paid} — признак платного участия;</li>
+ *   <li>{@code participantLimit} — лимит участников (0 = без ограничений);</li>
+ *   <li>{@code publishedOn} — дата/время публикации события;</li>
+ *   <li>{@code requestModeration} — нужно ли подтверждать заявки на участие;</li>
+ *   <li>{@code state} — текущее состояние события ({@link ru.practicum.dto.EventState});</li>
+ *   <li>{@code title} — заголовок события.</li>
+ * </ul>
+ */
 @Getter
 @Setter
 @AllArgsConstructor

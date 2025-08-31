@@ -17,7 +17,24 @@ import java.util.List;
 
 import static ru.practicum.dto.Constants.FORMAT_DATETIME;
 
-
+/**
+ * Админский REST-контроллер для управления событиями.
+ * <p>Доступен только администраторам, предоставляет операции поиска и модерации.</p>
+ *
+ * <ul>
+ *   <li>GET /admin/events — поиск событий по параметрам
+ *       (пользователи, состояния, категории, временной диапазон, пагинация);</li>
+ *   <li>GET /admin/events/check/category — поиск событий по категории (для проверки связей);</li>
+ *   <li>PATCH /admin/events/{eventId} — обновление события администратором;</li>
+ *   <li>GET /admin/events/{eventId} — получение события по идентификатору.</li>
+ * </ul>
+ *
+ * <p>Фильтрация событий инкапсулируется в {@link ru.practicum.event.dto.AdminEventParams}.
+ * Даты принимаются в формате {@link ru.practicum.dto.Constants#FORMAT_DATETIME}.</p>
+ *
+ * <p>Бизнес-логика реализована в {@link ru.practicum.event.service.EventService}.
+ * Все операции логируются через {@code Slf4j}.</p>
+ */
 @Slf4j
 @RestController
 @RequestMapping(path = "/admin/events")

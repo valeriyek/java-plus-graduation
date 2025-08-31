@@ -6,7 +6,22 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.practicum.dto.LocationDto;
-
+/**
+ * DTO для создания нового события.
+ * <p>Используется в приватном API при {@code POST /users/{userId}/events}.</p>
+ *
+ * <ul>
+ *   <li>{@code annotation} — краткая аннотация события, обязательная, от 20 до 2000 символов;</li>
+ *   <li>{@code category} — идентификатор категории, обязательный;</li>
+ *   <li>{@code description} — полное описание события, обязательное, от 20 до 7000 символов;</li>
+ *   <li>{@code eventDate} — дата и время проведения события (формат {@link ru.practicum.dto.Constants#FORMAT_DATETIME});</li>
+ *   <li>{@code location} — географическая локация события ({@link ru.practicum.dto.LocationDto});</li>
+ *   <li>{@code paid} — признак платного участия;</li>
+ *   <li>{@code participantLimit} — лимит участников (ноль = без ограничений);</li>
+ *   <li>{@code requestModeration} — нужно ли подтверждать заявки пользователей;</li>
+ *   <li>{@code title} — заголовок события, обязательный, от 3 до 120 символов.</li>
+ * </ul>
+ */
 @Data
 @AllArgsConstructor
 public class NewEventDto {
